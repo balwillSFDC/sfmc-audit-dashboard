@@ -1,5 +1,11 @@
-# Welcome to the react-redux-template repo
-This template was created to reduce the setup effort necessary to create a scalable React web app that leverages redux and other best practices.
+# Welcome to the SFMC Audit Dashboard 👋
+The SFMC Audit dashboard ⏲️ gives SFMC Super Admins a 360 view 🌎 of their Account in an instant ⚡. 
+
+## Upcoming Features
+* ⌛ Business Unit Inventory metrics
+* ⌛ User metrics
+* ⌛ Account details
+* ⌛ Downloadable Excel & JSON files 
 
 ## What are the benefits of using this template? 
 * Easy deployment to heroku (only need to deploy one project)
