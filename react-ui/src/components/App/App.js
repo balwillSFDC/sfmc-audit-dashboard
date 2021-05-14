@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import { connect } from 'react-redux';
+import { Button } from '@salesforce/design-system-react';
 
 const mapStateToProps = (state) => {
   return {
@@ -26,6 +27,7 @@ class App extends React.Component {
         <header className="App-header">
           <p>Welcome! This is a clean CRA for web app development</p>
         </header>
+        <Button label="Hello" />
       </div>
     );
   }
