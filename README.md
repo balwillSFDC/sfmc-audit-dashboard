@@ -1,5 +1,5 @@
 # Welcome to the SFMC Audit Dashboard 👋
-The SFMC Audit dashboard ⏲️ gives SFMC Super Admins a 360 view 🌎 of their Account in an instant ⚡. 
+The SFMC Audit dashboard gives Admins a 360 view 🌎 of their Account in an instant ⚡. 
 
 ## Upcoming Features
 * ⌛ Business Unit Inventory metrics
