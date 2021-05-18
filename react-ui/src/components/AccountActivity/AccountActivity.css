@@ -1,0 +1,12 @@
+#AccountActivity-panel {
+  margin-top: 1em;
+}
+
+.accountActivity-card {
+  max-width: 300px;
+  display: block;
+}
+
+.accountActivity-wrapper {
+  justify-content: space-evenly;
+}

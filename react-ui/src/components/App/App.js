@@ -1,7 +1,10 @@
 import React from 'react';
 import './App.css';
 import { connect } from 'react-redux';
-import { Button } from '@salesforce/design-system-react';
+import { BrandBand, Button } from '@salesforce/design-system-react';
+import Appheader from '../AppHeader/AppHeader';
+import AccountActivity from '../AccountActivity/AccountActivity';
+import { BrowserRouter, Route } from 'react-router-dom';
 
 const mapStateToProps = (state) => {
   return {
@@ -24,10 +27,16 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <p>Welcome! This is a clean CRA for web app development</p>
-        </header>
-        <Button label="Hello" />
+        <BrowserRouter>
+          <BrandBand
+            id="brand-band-lightning-blue"
+            className="slds-p-around_small"
+            theme="lightning-blue"
+          >
+            <Appheader />
+            <AccountActivity />
+          </BrandBand>
+        </BrowserRouter>
       </div>
     );
   }
