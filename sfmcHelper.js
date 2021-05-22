@@ -587,8 +587,6 @@ async function getAllEventData() {
   };
 }
 
-getRoles().then(console.log);
-
 module.exports = {
   getAllEventData,
   getEmailInventory,
