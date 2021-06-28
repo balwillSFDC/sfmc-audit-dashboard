@@ -23,7 +23,27 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-let workQueue = new Queue('work', REDIS_URL);
+// Build Queues for API request processing
+let eventDataQueue = new Queue('eventData', REDIS_URL);
+let emailInventoryQueue = new Queue('emailInventory', REDIS_URL);
+let templateInventoryQueue = new Queue('templateInventory', REDIS_URL);
+let categoryInventoryQueue = new Queue('categoryInventory', REDIS_URL);
+let triggeredSendInventoryQueue = new Queue(
+  'triggeredSendInventory',
+  REDIS_URL
+);
+let cloudPageInventoryQueue = new Queue('cloudPageInventory', REDIS_URL);
+let dataExtensionInventoryQueue = new Queue(
+  'dataExtensionInventory',
+  REDIS_URL
+);
+let filterInventoryQueue = new Queue('filterInventory', REDIS_URL);
+let queryInventoryQueue = new Queue('queryInventory', REDIS_URL);
+let automationInventoryQueue = new Queue('automationInventory', REDIS_URL);
+let journeyInventoryQueue = new Queue('journeyInventory', REDIS_URL);
+let businessUnitInfoQueue = new Queue('businessUnitInfo', REDIS_URL);
+let accountUserQueue = new Queue('accountUserInventory', REDIS_URL);
+let roleInventoryQueue = new Queue('roleInventory', REDIS_URL);
 
 // Priority serve any static files
 app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
@@ -38,7 +58,7 @@ app.post('/api/getAllEventData', async (req, res) => {
   console.log('request sent for getAllEventData()');
 
   try {
-    let job = await workQueue.add({
+    let job = await eventDataQueue.add({
       jobType: 'GET_ALL_EVENT_DATA'
     });
 
@@ -58,7 +78,7 @@ app.get('/api/getAllEventData/:id', async (req, res) => {
   let id = req.params.id;
 
   if (id) {
-    let job = await workQueue.getJob(id);
+    let job = await eventDataQueue.getJob(id);
 
     if (job === null) {
       res.status(404).end();
@@ -78,7 +98,7 @@ app.post('/api/getEmailInventory', async (req, res) => {
   console.log('request sent for getEmailInventory()');
 
   try {
-    let job = await workQueue.add({
+    let job = await emailInventoryQueue.add({
       jobType: 'GET_EMAIL_INVENTORY'
     });
 
@@ -98,7 +118,7 @@ app.get('/api/getEmailInventory/:id', async (req, res) => {
   let id = req.params.id;
 
   if (id) {
-    let job = await workQueue.getJob(id);
+    let job = await emailInventoryQueue.getJob(id);
 
     if (job === null) {
       res.status(404).end();
@@ -118,7 +138,7 @@ app.post('/api/getTemplateInventory', async (req, res) => {
   console.log('request sent for getTemplateInventory()');
 
   try {
-    let job = await workQueue.add({
+    let job = await templateInventoryQueue.add({
       jobType: 'GET_TEMPLATE_INVENTORY'
     });
 
@@ -138,7 +158,7 @@ app.get('/api/getTemplateInventory/:id', async (req, res) => {
   let id = req.params.id;
 
   if (id) {
-    let job = await workQueue.getJob(id);
+    let job = await templateInventoryQueue.getJob(id);
 
     if (job === null) {
       res.status(404).end();
@@ -158,7 +178,7 @@ app.post('/api/getCategories', async (req, res) => {
   console.log('request sent for getCategories()');
 
   try {
-    let job = await workQueue.add({
+    let job = await categoryInventoryQueue.add({
       jobType: 'GET_CATEGORIES'
     });
 
@@ -178,7 +198,7 @@ app.get('/api/getCategories/:id', async (req, res) => {
   let id = req.params.id;
 
   if (id) {
-    let job = await workQueue.getJob(id);
+    let job = await categoryInventoryQueue.getJob(id);
 
     if (job === null) {
       res.status(404).end();
@@ -198,7 +218,7 @@ app.post('/api/getTriggeredSends', async (req, res) => {
   console.log('request sent for getTriggeredSends()');
 
   try {
-    let job = await workQueue.add({
+    let job = await triggeredSendInventoryQueue.add({
       jobType: 'GET_TRIGGERED_SENDS'
     });
 
@@ -218,7 +238,7 @@ app.get('/api/getTriggeredSends/:id', async (req, res) => {
   let id = req.params.id;
 
   if (id) {
-    let job = await workQueue.getJob(id);
+    let job = await triggeredSendInventoryQueue.getJob(id);
 
     if (job === null) {
       res.status(404).end();
@@ -238,7 +258,7 @@ app.post('/api/getCloudPage', async (req, res) => {
   console.log('request sent for getCloudPages()');
 
   try {
-    let job = await workQueue.add({
+    let job = await cloudPageInventoryQueue.add({
       jobType: 'GET_CLOUD_PAGES'
     });
 
@@ -258,7 +278,7 @@ app.get('/api/getCloudPage/:id', async (req, res) => {
   let id = req.params.id;
 
   if (id) {
-    let job = await workQueue.getJob(id);
+    let job = await cloudPageInventoryQueue.getJob(id);
 
     if (job === null) {
       res.status(404).end();
@@ -278,7 +298,7 @@ app.post('/api/getAllDataExtensions', async (req, res) => {
   console.log('request sent for getAllDataExtensions()');
 
   try {
-    let job = await workQueue.add({
+    let job = await dataExtensionInventoryQueue.add({
       jobType: 'GET_ALL_DATA_EXTENSIONS'
     });
 
@@ -298,7 +318,7 @@ app.get('/api/getAllDataExtensions/:id', async (req, res) => {
   let id = req.params.id;
 
   if (id) {
-    let job = await workQueue.getJob(id);
+    let job = await dataExtensionInventoryQueue.getJob(id);
 
     if (job === null) {
       res.status(404).end();
@@ -318,7 +338,7 @@ app.post('/api/getFilterData', async (req, res) => {
   console.log('request sent for getFilterData()');
 
   try {
-    let job = await workQueue.add({
+    let job = await filterInventoryQueue.add({
       jobType: 'GET_FILTER_DATA'
     });
 
@@ -338,7 +358,7 @@ app.get('/api/getFilterData/:id', async (req, res) => {
   let id = req.params.id;
 
   if (id) {
-    let job = await workQueue.getJob(id);
+    let job = await filterInventoryQueue.getJob(id);
 
     if (job === null) {
       res.status(404).end();
@@ -358,7 +378,7 @@ app.post('/api/getQueries', async (req, res) => {
   console.log('request sent for getQueries()');
 
   try {
-    let job = await workQueue.add({
+    let job = await queryInventoryQueue.add({
       jobType: 'GET_QUERIES'
     });
 
@@ -378,7 +398,7 @@ app.get('/api/getQueries/:id', async (req, res) => {
   let id = req.params.id;
 
   if (id) {
-    let job = await workQueue.getJob(id);
+    let job = await queryInventoryQueue.getJob(id);
 
     if (job === null) {
       res.status(404).end();
@@ -398,7 +418,7 @@ app.post('/api/getAutomations', async (req, res) => {
   console.log('request sent for getAutomations()');
 
   try {
-    let job = await workQueue.add({
+    let job = await automationInventoryQueue.add({
       jobType: 'GET_AUTOMATIONS'
     });
 
@@ -418,7 +438,7 @@ app.get('/api/getAutomations/:id', async (req, res) => {
   let id = req.params.id;
 
   if (id) {
-    let job = await workQueue.getJob(id);
+    let job = await automationInventoryQueue.getJob(id);
 
     if (job === null) {
       res.status(404).end();
@@ -438,7 +458,7 @@ app.post('/api/getJourneys', async (req, res) => {
   console.log('request sent for getJourneys()');
 
   try {
-    let job = await workQueue.add({
+    let job = await journeyInventoryQueue.add({
       jobType: 'GET_JOURNEYS'
     });
 
@@ -458,7 +478,7 @@ app.get('/api/getJourneys/:id', async (req, res) => {
   let id = req.params.id;
 
   if (id) {
-    let job = await workQueue.getJob(id);
+    let job = await journeyInventoryQueue.getJob(id);
 
     if (job === null) {
       res.status(404).end();
@@ -478,7 +498,7 @@ app.post('/api/getBusinessUnits', async (req, res) => {
   console.log('request sent for getBusinessUnits()');
 
   try {
-    let job = await workQueue.add({
+    let job = await businessUnitInfoQueue.add({
       jobType: 'GET_BUSINESS_UNIT'
     });
 
@@ -498,7 +518,7 @@ app.get('/api/getBusinessUnits/:id', async (req, res) => {
   let id = req.params.id;
 
   if (id) {
-    let job = await workQueue.getJob(id);
+    let job = await businessUnitInfoQueue.getJob(id);
 
     if (job === null) {
       res.status(404).end();
@@ -518,7 +538,7 @@ app.post('/api/getAccountUsers', async (req, res) => {
   console.log('request sent for getAccountUsers()');
 
   try {
-    let job = await workQueue.add({
+    let job = await accountUserQueue.add({
       jobType: 'GET_ACCOUNT_USERS'
     });
 
@@ -538,7 +558,7 @@ app.get('/api/getAccountUsers/:id', async (req, res) => {
   let id = req.params.id;
 
   if (id) {
-    let job = await workQueue.getJob(id);
+    let job = await accountUserQueue.getJob(id);
 
     if (job === null) {
       res.status(404).end();
@@ -558,7 +578,7 @@ app.post('/api/getRoles', async (req, res) => {
   console.log('request sent for getRoles()');
 
   try {
-    let job = await workQueue.add({
+    let job = await roleInventoryQueue.add({
       jobType: 'GET_ROLES'
     });
 
@@ -578,7 +598,7 @@ app.get('/api/getRoles/:id', async (req, res) => {
   let id = req.params.id;
 
   if (id) {
-    let job = await workQueue.getJob(id);
+    let job = await roleInventoryQueue.getJob(id);
 
     if (job === null) {
       res.status(404).end();

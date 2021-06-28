@@ -5,6 +5,7 @@ import { BrandBand, Button } from '@salesforce/design-system-react';
 import Appheader from '../AppHeader/AppHeader';
 import AccountActivity from '../AccountActivity/AccountActivity';
 import { BrowserRouter, Route } from 'react-router-dom';
+import AccountInventory from '../AccountInventory/AccountInventory';
 
 const mapStateToProps = (state) => {
   return {
@@ -20,10 +21,6 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 class App extends React.Component {
-  constructor() {
-    super();
-  }
-
   render() {
     return (
       <div className="App">
@@ -35,6 +32,7 @@ class App extends React.Component {
           >
             <Appheader />
             <AccountActivity />
+            <AccountInventory />
           </BrandBand>
         </BrowserRouter>
       </div>

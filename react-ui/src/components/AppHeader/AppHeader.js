@@ -9,6 +9,7 @@ import {
   GlobalNavigationBarRegion,
   GlobalNavigationBarButton
 } from '@salesforce/design-system-react';
+import '../AppHeader/AppHeader.css';
 
 class AppHeader extends React.Component {
   constructor(props) {

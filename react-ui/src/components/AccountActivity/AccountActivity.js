@@ -6,24 +6,15 @@ import {
   Icon
 } from '@salesforce/design-system-react';
 import './AccountActivity.css';
+import {
+  addEventDataJob,
+  updateEventDataJob
+} from '../../stateManagement/actions';
 
 const mapStateToProps = (state) => {
   return {
-    sends: {
-      count: 1000
-    },
-    bounces: {
-      count: 100
-    },
-    opens: {
-      count: 100
-    },
-    clicks: {
-      count: 100
-    },
-    unsubscribes: {
-      count: 100
-    }
+    eventDataJob: state.eventDataJob,
+    eventData: state.eventData
   };
 };
 
@@ -32,8 +23,17 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 class AccountActivity extends React.Component {
-  constructor() {
-    super();
+  componentDidMount() {
+    this.props.dispatch(addEventDataJob());
+
+    setInterval(() => {
+      if (
+        Object.keys(this.props.eventData).length === 0 &&
+        this.props.eventDataJob != 0
+      ) {
+        this.props.dispatch(updateEventDataJob(this.props.eventDataJob));
+      }
+    }, 2000);
   }
 
   render() {
@@ -55,7 +55,7 @@ class AccountActivity extends React.Component {
                   <b>Sends</b>
                 </div>
                 <div className="slds-text-heading_medium slds-text-align_center">
-                  1000
+                  {this.props.eventData.sendData.length}
                 </div>
               </div>
             </div>
@@ -65,7 +65,7 @@ class AccountActivity extends React.Component {
                   <b>Opens</b>
                 </div>
                 <div className="slds-text-heading_medium slds-text-align_center">
-                  1000
+                  {this.props.eventData.openData.length}
                 </div>
               </div>
             </div>
@@ -75,7 +75,7 @@ class AccountActivity extends React.Component {
                   <b>Bounces</b>
                 </div>
                 <div className="slds-text-heading_medium slds-text-align_center">
-                  1000
+                  {this.props.eventData.bounceData.length}
                 </div>
               </div>
             </div>
@@ -85,7 +85,7 @@ class AccountActivity extends React.Component {
                   <b>Clicks</b>
                 </div>
                 <div className="slds-text-heading_medium slds-text-align_center">
-                  1000
+                  {this.props.eventData.clickData.length}
                 </div>
               </div>
             </div>
@@ -95,7 +95,7 @@ class AccountActivity extends React.Component {
                   <b>Unsubscribes</b>
                 </div>
                 <div className="slds-text-heading_medium slds-text-align_center">
-                  1000
+                  {this.props.eventData.unsubscribeData.length}
                 </div>
               </div>
             </div>

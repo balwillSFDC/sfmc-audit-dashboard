@@ -1,8 +1,9 @@
 const initialState = {
   // Define initial state below
-  value_1: '',
-  value_2: '',
-  value_3: 0
+  eventData: {},
+  eventDataJob: 0,
+  emailInventory: {},
+  templateInventory: {}
   // ...
 };
 

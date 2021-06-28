@@ -25,54 +25,150 @@ let workers = process.env.WEB_CONCURRENCY || 2;
 let maxJobsPerWorker = 50;
 
 function start() {
-  let workQueue = new Queue('work', REDIS_URL);
+  let eventDataQueue = new Queue('eventData', REDIS_URL);
+  let emailInventoryQueue = new Queue('emailInventory', REDIS_URL);
+  let templateInventoryQueue = new Queue('templateInventory', REDIS_URL);
+  let categoryInventoryQueue = new Queue('categoryInventory', REDIS_URL);
+  let triggeredSendInventoryQueue = new Queue(
+    'triggeredSendInventory',
+    REDIS_URL
+  );
+  let cloudPageInventoryQueue = new Queue('cloudPageInventory', REDIS_URL);
+  let dataExtensionInventoryQueue = new Queue(
+    'dataExtensionInventory',
+    REDIS_URL
+  );
+  let filterInventoryQueue = new Queue('filterInventory', REDIS_URL);
+  let queryInventoryQueue = new Queue('queryInventory', REDIS_URL);
+  let automationInventoryQueue = new Queue('automationInventory', REDIS_URL);
+  let journeyInventoryQueue = new Queue('journeyInventory', REDIS_URL);
+  let businessUnitInfoQueue = new Queue('businessUnitInfo', REDIS_URL);
+  let accountUserQueue = new Queue('accountUserInventory', REDIS_URL);
+  let roleInventoryQueue = new Queue('roleInventory', REDIS_URL);
 
-  workQueue.process(maxJobsPerWorker, async (job) => {
+  eventDataQueue.process(maxJobsPerWorker, async (job) => {
     console.log(job.data);
 
-    switch (job.data.jobType) {
-      case 'GET_ALL_EVENT_DATA':
-        let eventDataResult = await getAllEventData();
-        return eventDataResult;
-      case 'GET_EMAIL_INVENTORY':
-        let emailInventoryResult = await getEmailInventory();
-        return emailInventoryResult;
-      case 'GET_TEMPLATE_INVENTORY':
-        let templateInventoryResult = await getTemplateInventory();
-        return templateInventoryResult;
-      case 'GET_CATEGORIES':
-        let categoriesResult = await getCategories();
-        return categoriesResult;
-      case 'GET_TRIGGERED_SENDS':
-        let triggeredSendsResult = await getTriggeredSends();
-        return triggeredSendsResult;
-      case 'GET_CLOUD_PAGES':
-        let cloudPagesResult = await getCloudPages();
-        return cloudPagesResult;
-      case 'GET_ALL_DATA_EXTENSIONS':
-        let dataExtensionsResult = await getAllDataExtensions();
-        return dataExtensionsResult;
-      case 'GET_FILTER_DATA':
-        let filterDataResult = await getFilterData();
-        return filterDataResult;
-      case 'GET_QUERIES':
-        let queriesResult = await getQueries();
-        return queriesResult;
-      case 'GET_AUTOMATIONS':
-        let automationsResult = await getAutomations();
-        return automationsResult;
-      case 'GET_JOURNEYS':
-        let journeysResult = await getJourneys();
-        return journeysResult;
-      case 'GET_BUSINESS_UNIT':
-        let businessUnitResult = await getBusinessUnits();
-        return businessUnitResult;
-      case 'GET_ACCOUNT_USERS':
-        let accountUsersResult = await getAccountUsers();
-        return accountUsersResult;
-      case 'GET_ROLES':
-        let rolesResult = await getRoles();
-        return rolesResult;
+    if (job.data.jobType == 'GET_ALL_EVENT_DATA') {
+      let eventDataResult = await getAllEventData();
+      return eventDataResult;
+    }
+  });
+
+  emailInventoryQueue.process(maxJobsPerWorker, async (job) => {
+    console.log(job.data);
+
+    if (job.data.jobType == 'GET_EMAIL_INVENTORY') {
+      let emailInventoryResult = await getEmailInventory();
+      return emailInventoryResult;
+    }
+  });
+
+  templateInventoryQueue.process(maxJobsPerWorker, async (job) => {
+    console.log(job.data);
+
+    if (job.data.jobType == 'GET_TEMPLATE_INVENTORY') {
+      let templateInventoryResult = await getTemplateInventory();
+      return templateInventoryResult;
+    }
+  });
+
+  categoryInventoryQueue.process(maxJobsPerWorker, async (job) => {
+    console.log(job.data);
+
+    if (job.data.jobType == 'GET_CATEGORIES') {
+      let categoriesResult = await getCategories();
+      return categoriesResult;
+    }
+  });
+
+  triggeredSendInventoryQueue.process(maxJobsPerWorker, async (job) => {
+    console.log(job.data);
+
+    if (job.data.jobType == 'GET_TRIGGERED_SENDS') {
+      let triggeredSendsResult = await getTriggeredSends();
+      return triggeredSendsResult;
+    }
+  });
+
+  cloudPageInventoryQueue.process(maxJobsPerWorker, async (job) => {
+    console.log(job.data);
+
+    if (job.data.jobType == 'GET_CLOUD_PAGES') {
+      let cloudPagesResult = await getCloudPages();
+      return cloudPagesResult;
+    }
+  });
+
+  dataExtensionInventoryQueue.process(maxJobsPerWorker, async (job) => {
+    console.log(job.data);
+
+    if (job.data.jobType == 'GET_ALL_DATA_EXTENSIONS') {
+      let dataExtensionsResult = await getAllDataExtensions();
+      return dataExtensionsResult;
+    }
+  });
+
+  filterInventoryQueue.process(maxJobsPerWorker, async (job) => {
+    console.log(job.data);
+
+    if (job.data.jobType == 'GET_FILTER_DATA') {
+      let filterDataResult = await getFilterData();
+      return filterDataResult;
+    }
+  });
+
+  queryInventoryQueue.process(maxJobsPerWorker, async (job) => {
+    console.log(job.data);
+
+    if (job.data.jobType == 'GET_QUERIES') {
+      let queriesResult = await getQueries();
+      return queriesResult;
+    }
+  });
+
+  automationInventoryQueue.process(maxJobsPerWorker, async (job) => {
+    console.log(job.data);
+
+    if (job.data.jobType == 'GET_AUTOMATIONS') {
+      let automationsResult = await getAutomations();
+      return automationsResult;
+    }
+  });
+
+  journeyInventoryQueue.process(maxJobsPerWorker, async (job) => {
+    console.log(job.data);
+
+    if (job.data.jobType == 'GET_JOURNEYS') {
+      let journeysResult = await getJourneys();
+      return journeysResult;
+    }
+  });
+
+  businessUnitInfoQueue.process(maxJobsPerWorker, async (job) => {
+    console.log(job.data);
+
+    if (job.data.jobType == 'GET_BUSINESS_UNIT') {
+      let businessUnitResult = await getBusinessUnits();
+      return businessUnitResult;
+    }
+  });
+
+  accountUserQueue.process(maxJobsPerWorker, async (job) => {
+    console.log(job.data);
+
+    if (job.data.jobType == 'GET_ACCOUNT_USERS') {
+      let accountUsersResult = await getAccountUsers();
+      return accountUsersResult;
+    }
+  });
+
+  roleInventoryQueue.process(maxJobsPerWorker, async (job) => {
+    console.log(job.data);
+
+    if (job.data.jobType == 'GET_ROLES') {
+      let rolesResult = await getRoles();
+      return rolesResult;
     }
   });
 }
