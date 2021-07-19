@@ -1,12 +1,12 @@
-#AccountActivity-panel {
+#EmailActivity-panel {
   margin-top: 1em;
 }
 
-.accountActivity-card {
+.emailActivity-card {
   max-width: 300px;
   display: block;
 }
 
-.accountActivity-wrapper {
+.emailActivity-wrapper {
   justify-content: space-evenly;
 }

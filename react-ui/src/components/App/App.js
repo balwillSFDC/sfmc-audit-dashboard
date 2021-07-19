@@ -3,7 +3,7 @@ import './App.css';
 import { connect } from 'react-redux';
 import { BrandBand, Button } from '@salesforce/design-system-react';
 import Appheader from '../AppHeader/AppHeader';
-import AccountActivity from '../AccountActivity/AccountActivity';
+import EmailActivity from '../EmailActivity/EmailActivity';
 import { BrowserRouter, Route } from 'react-router-dom';
 import AccountInventory from '../AccountInventory/AccountInventory';
 
@@ -31,7 +31,7 @@ class App extends React.Component {
             theme="lightning-blue"
           >
             <Appheader />
-            <AccountActivity />
+            <EmailActivity />
             <AccountInventory />
           </BrandBand>
         </BrowserRouter>
