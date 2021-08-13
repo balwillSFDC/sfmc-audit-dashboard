@@ -29,7 +29,15 @@ function getEventData(eventType) {
   switch (eventType) {
     case 'sent':
       let sentOptions = {
-        props: ['SendID', 'EventDate', 'SubscriberKey']
+        props: [
+          'SendID', 
+          'EventDate', 
+          'SubscriberKey',
+          'EventType',
+          'BatchID',
+          'TriggeredSendDefinitionObjectID',
+          'ListID'
+        ]
       };
 
       let sentEvent = sfmcNode.sentEvent(sentOptions);
@@ -43,7 +51,15 @@ function getEventData(eventType) {
       return sentEventResults;
     case 'open':
       let openOptions = {
-        props: ['SendID', 'EventDate', 'SubscriberKey']
+        props: [
+          'ID',
+          'SendID', 
+          'EventDate', 
+          'SubscriberKey',
+          'EventType',
+          'TriggeredSendDefinitionObjectID',
+          'BatchID'
+        ]
       };
 
       let openEvent = sfmcNode.openEvent(openOptions);
@@ -57,7 +73,18 @@ function getEventData(eventType) {
       return openEventResults;
     case 'bounce':
       let bounceOptions = {
-        props: ['SendID', 'EventDate', 'SubscriberKey']
+        props: [
+          'ID',
+          'SendID', 
+          'EventDate', 
+          'SubscriberKey',
+          'SMTPCode',
+          'SMTPReason',
+          'BounceCategory',
+          'EventType',
+          'TriggeredSendDefinitionObjectID',
+          'BatchID'
+        ]
       };
 
       let bounceEvent = sfmcNode.bounceEvent(bounceOptions);
@@ -69,9 +96,22 @@ function getEventData(eventType) {
       });
 
       return bounceEventResults;
+    
     case 'click':
       let clickOptions = {
-        props: ['SendID', 'EventDate', 'SubscriberKey']
+        props: [
+          'ID',
+          'SendID', 
+          'EventDate', 
+          'SubscriberKey',
+          'SendID',
+          'SubscriberKey',
+          'EventType',
+          'TriggeredSendDefinitionObjectID',
+          'BatchID',
+          'URLID',
+          'URL'
+        ]
       };
 
       let clickEvent = sfmcNode.clickEvent(clickOptions);
@@ -85,7 +125,15 @@ function getEventData(eventType) {
       return clickEventResults;
     case 'unsubscribe':
       let unsubscribeOptions = {
-        props: ['SendID', 'EventDate', 'SubscriberKey']
+        props: [
+          'ID',
+          'SendID', 
+          'EventDate', 
+          'SubscriberKey',
+          'TriggeredSendDefinitionObjectID',
+          'BatchID',
+          'IsMasterUnsubscribed'
+        ]
       };
 
       let unsubscribeEvent = sfmcNode.unsubEvent(unsubscribeOptions);
@@ -212,7 +260,17 @@ async function getCategories() {
 
 async function getTriggeredSends() {
   let triggeredSendOptions = {
-    props: ['ObjectId']
+    props: [
+      'TriggeredSendDefinition.CreatedDate',
+      'TriggeredSendDefinition.CustomerKey',
+      'TriggeredSendDefinition.Name',
+      'TriggeredSendDefinition.Description',
+      'TriggeredSendDefinition.TriggeredSendType',
+      'TriggeredSendDefinition.TriggeredSendStatus',
+      'TriggeredSendDefinition.FromName',
+      'TriggeredSendDefinition.FromAddress',
+      'TriggeredSendDefinition.EmailSubject'
+    ]
   };
 
   let triggeredSend = sfmcNode.triggeredSend(triggeredSendOptions);
@@ -225,6 +283,7 @@ async function getTriggeredSends() {
 
   return triggeredSendResults;
 }
+
 
 async function getCloudPages() {
   let accessToken = await getAccessToken();

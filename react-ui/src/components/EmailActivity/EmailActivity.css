@@ -10,3 +10,8 @@
 .emailActivity-wrapper {
   justify-content: space-evenly;
 }
+
+.EmailActivityCard:hover {
+  background-color: #F3F2F2;
+  transition: background-color 250ms linear;
+}

@@ -16,7 +16,8 @@ const reducer = (state = initialState, action) => {
     case 'ADD_GET_ALL_EVENT_DATA_JOB_SUCCESS':
       return {
         ...state,
-        eventDataJob: action.payload.eventDataJob
+        eventDataJob: action.payload.eventDataJob,
+        eventDataJobState: action.payload.eventDataJobState
       };
     case 'UPDATE_GET_ALL_EVENT_DATA_JOB':
       return {
@@ -25,7 +26,8 @@ const reducer = (state = initialState, action) => {
     case 'UPDATE_GET_ALL_EVENT_DATA_JOB_SUCCESS':
       return {
         ...state,
-        eventData: action.payload.eventData
+        eventData: action.payload.eventData,
+        eventDataJobState: action.payload.eventDataJobState
       };
     case 'ADD_EMAIL_INVENTORY_JOB':
       return {
@@ -34,7 +36,8 @@ const reducer = (state = initialState, action) => {
     case 'ADD_EMAIL_INVENTORY_JOB_SUCCESS':
       return {
         ...state,
-        emailInventoryJob: action.payload.emailInventoryJob
+        emailInventoryJob: action.payload.emailInventoryJob,
+        emailInventoryJobState: action.payload.emailInventoryJobState
       };
     case 'UPDATE_EMAIL_INVENTORY':
       return {
@@ -43,7 +46,8 @@ const reducer = (state = initialState, action) => {
     case 'UPDATE_EMAIL_INVENTORY_SUCCESS':
       return {
         ...state,
-        emailInventory: action.payload.emailInventory
+        emailInventory: action.payload.emailInventory,
+        emailInventoryJobState: action.payload.emailInventoryJobState
       };
     case 'ADD_TEMPLATE_INVENTORY_JOB':
       return {
@@ -52,7 +56,8 @@ const reducer = (state = initialState, action) => {
     case 'ADD_TEMPLATE_INVENTORY_JOB_SUCCESS':
       return {
         ...state,
-        templateInventoryJob: action.payload.templateInventoryJob
+        templateInventoryJob: action.payload.templateInventoryJob,
+        templateInventoryJobState: action.payload.templateInventoryJobState
       };
     case 'UPDATE_TEMPLATE_INVENTORY':
       return {
@@ -61,7 +66,8 @@ const reducer = (state = initialState, action) => {
     case 'UPDATE_TEMPLATE_INVENTORY_SUCCESS':
       return {
         ...state,
-        templateInventory: action.payload.templateInventory
+        templateInventory: action.payload.templateInventory,
+        templateInventoryJobState: action.payload.templateInventoryJobState
       };
     case 'ADD_CATEGORIES_JOB':
       return {
@@ -70,7 +76,8 @@ const reducer = (state = initialState, action) => {
     case 'ADD_CATEGORIES_JOB_SUCCESS':
       return {
         ...state,
-        categoriesJob: action.payload.categoriesJob
+        categoriesJob: action.payload.categoriesJob,
+        categoriesJobState: action.payload.categoriesJobState
       };
     case 'UPDATE_CATEGORIES':
       return {
@@ -79,7 +86,8 @@ const reducer = (state = initialState, action) => {
     case 'UPDATE_CATEGORIES_SUCCESS':
       return {
         ...state,
-        categories: action.payload.categories
+        categories: action.payload.categories,
+        categoriesJobState: action.payload.categoriesJobState
       };
     case 'ADD_TRIGGERED_SENDS_JOB':
       return {
@@ -88,7 +96,8 @@ const reducer = (state = initialState, action) => {
     case 'ADD_TRIGGERED_SENDS_JOB_SUCCESS':
       return {
         ...state,
-        triggeredSendsJob: action.payload.triggeredSendsJob
+        triggeredSendsJob: action.payload.triggeredSendsJob,
+        triggeredSendsJobState: action.payload.triggeredSendsJobState
       };
     case 'UPDATE_TRIGGERED_SENDS':
       return {
@@ -97,7 +106,8 @@ const reducer = (state = initialState, action) => {
     case 'UPDATE_TRIGGERED_SENDS_SUCCESS':
       return {
         ...state,
-        triggeredSends: action.payload.triggeredSends
+        triggeredSends: action.payload.triggeredSends,
+        triggeredSendsJobState: action.payload.triggeredSendsJobState
       };
     case 'ADD_CLOUD_PAGES_JOB':
       return {
@@ -106,7 +116,8 @@ const reducer = (state = initialState, action) => {
     case 'ADD_CLOUD_PAGES_JOB_SUCCESS':
       return {
         ...state,
-        cloudPagesJob: action.payload.cloudPagesJob
+        cloudPagesJob: action.payload.cloudPagesJob,
+        cloudPagesJobState: action.payload.cloudPagesJobState
       };
     case 'UPDATE_CLOUD_PAGES':
       return {
@@ -115,7 +126,8 @@ const reducer = (state = initialState, action) => {
     case 'UPDATE_CLOUD_PAGES_SUCCESS':
       return {
         ...state,
-        cloudPages: action.payload.cloudPages
+        cloudPages: action.payload.cloudPages,
+        cloudPagesJobState: action.payload.cloudPagesJobState
       };
     case 'ADD_DATA_EXTENSIONS_JOB':
       return {
@@ -124,7 +136,8 @@ const reducer = (state = initialState, action) => {
     case 'ADD_DATA_EXTENSIONS_JOB_SUCCESS':
       return {
         ...state,
-        dataExtensionsJob: action.payload.dataExtensionsJob
+        dataExtensionsJob: action.payload.dataExtensionsJob,
+        dataExtensionsJobState: action.payload.dataExtensionsJobState
       };
     case 'UPDATE_DATA_EXTENSIONS':
       return {
@@ -133,7 +146,8 @@ const reducer = (state = initialState, action) => {
     case 'UPDATE_DATA_EXTENSIONS_SUCCESS':
       return {
         ...state,
-        dataExtensions: action.payload.dataExtensions
+        dataExtensions: action.payload.dataExtensions,
+        dataExtensionsJobState: action.payload.dataExtensionsJobState
       };
     case 'ADD_FILTER_DATA_JOB':
       return {
@@ -142,7 +156,8 @@ const reducer = (state = initialState, action) => {
     case 'ADD_FILTER_DATA_JOB_SUCCESS':
       return {
         ...state,
-        filterDataJob: action.payload.filterDataJob
+        filterDataJob: action.payload.filterDataJob,
+        filterDataJobState: action.payload.filterDataJobState
       };
     case 'UPDATE_FILTER_DATA':
       return {
@@ -151,7 +166,8 @@ const reducer = (state = initialState, action) => {
     case 'UPDATE_FILTER_DATA_SUCCESS':
       return {
         ...state,
-        filterData: action.payload.filterData
+        filterData: action.payload.filterData,
+        filterDataJobState: action.payload.filterDataJobState
       };
     case 'ADD_QUERIES_JOB':
       return {
@@ -160,7 +176,8 @@ const reducer = (state = initialState, action) => {
     case 'ADD_QUERIES_JOB_SUCCESS':
       return {
         ...state,
-        queriesJob: action.payload.queriesJob
+        queriesJob: action.payload.queriesJob,
+        queriesJobState: action.payload.queriesJobState
       };
     case 'UPDATE_QUERIES':
       return {
@@ -169,7 +186,8 @@ const reducer = (state = initialState, action) => {
     case 'UPDATE_QUERIES_SUCCESS':
       return {
         ...state,
-        queries: action.payload.queries
+        queries: action.payload.queries,
+        queriesJobState: action.payload.queriesJobState
       };
     case 'ADD_AUTOMATIONS_JOB':
       return {
@@ -178,7 +196,8 @@ const reducer = (state = initialState, action) => {
     case 'ADD_AUTOMATIONS_JOB_SUCCESS':
       return {
         ...state,
-        automationsJob: action.payload.automationsJob
+        automationsJob: action.payload.automationsJob,
+        automationsJobState: action.payload.automationsJobState
       };
     case 'UPDATE_AUTOMATIONS':
       return {
@@ -187,7 +206,8 @@ const reducer = (state = initialState, action) => {
     case 'UPDATE_AUTOMATIONS_SUCCESS':
       return {
         ...state,
-        automations: action.payload.automations
+        automations: action.payload.automations,
+        automationsJobState: action.payload.automationsJobState
       };
     case 'ADD_JOURNEYS_JOB':
       return {
@@ -196,7 +216,8 @@ const reducer = (state = initialState, action) => {
     case 'ADD_JOURNEYS_JOB_SUCCESS':
       return {
         ...state,
-        journeysJob: action.payload.journeysJob
+        journeysJob: action.payload.journeysJob,
+        journeysJobState: action.payload.journeysJobState
       };
     case 'UPDATE_JOURNEYS':
       return {
@@ -205,7 +226,8 @@ const reducer = (state = initialState, action) => {
     case 'UPDATE_JOURNEYS_SUCCESS':
       return {
         ...state,
-        journeys: action.payload.journeys
+        journeys: action.payload.journeys,
+        journeysJobState: action.payload.journeysJobState
       };
     case 'ADD_BUSINESS_UNITS_JOB':
       return {
@@ -214,7 +236,8 @@ const reducer = (state = initialState, action) => {
     case 'ADD_BUSINESS_UNITS_JOB_SUCCESS':
       return {
         ...state,
-        businessUnitsJob: action.payload.businessUnitsJob
+        businessUnitsJob: action.payload.businessUnitsJob,
+        businessUnitsJobState: action.payload.businessUnitsJobState
       };
     case 'UPDATE_BUSINESS_UNITS':
       return {
@@ -223,7 +246,8 @@ const reducer = (state = initialState, action) => {
     case 'UPDATE_BUSINESS_UNITS_SUCCESS':
       return {
         ...state,
-        businessUnits: action.payload.businessUnits
+        businessUnits: action.payload.businessUnits,
+        businessUnitsJobState: action.payload.businessUnitsJobState
       };
     case 'ADD_ACCOUNT_USERS_JOB':
       return {
@@ -232,7 +256,8 @@ const reducer = (state = initialState, action) => {
     case 'ADD_ACCOUNT_USERS_JOB_SUCCESS':
       return {
         ...state,
-        accountUsersJob: action.payload.accountUsersJob
+        accountUsersJob: action.payload.accountUsersJob,
+        accountUsersJobState: action.payload.accountUsersJobState
       };
     case 'UPDATE_ACCOUNT_USERS':
       return {
@@ -241,7 +266,8 @@ const reducer = (state = initialState, action) => {
     case 'UPDATE_ACCOUNT_USERS_SUCCESS':
       return {
         ...state,
-        accountUsers: action.payload.accountUsers
+        accountUsers: action.payload.accountUsers,
+        accountUsersJobState: action.payload.accountUsersJobState
       };
     case 'ADD_ROLES_JOB':
       return {
@@ -250,7 +276,8 @@ const reducer = (state = initialState, action) => {
     case 'ADD_ROLES_JOB_SUCCESS':
       return {
         ...state,
-        rolesJob: action.payload.rolesJob
+        rolesJob: action.payload.rolesJob,
+        rolesJobState: action.payload.rolesJobState
       };
     case 'UPDATE_ROLES':
       return {
@@ -259,8 +286,19 @@ const reducer = (state = initialState, action) => {
     case 'UPDATE_ROLES_SUCCESS':
       return {
         ...state,
-        roles: action.payload.roles
+        roles: action.payload.roles,
+        rolesJobState: action.payload.rolesJobState
       };
+    case 'CHANGE_ACCOUNT_INVENTORY_SELECTED':
+      return {
+        ...state,
+        accountInventorySelected: action.payload.accountInventorySelected
+      }
+    case 'CHANGE_EMAIL_ACTIVITY_SELECTED':
+      return {
+        ...state,
+        emailActivitySelected: action.payload.emailActivitySelected
+      }
     default:
       return state;
   }

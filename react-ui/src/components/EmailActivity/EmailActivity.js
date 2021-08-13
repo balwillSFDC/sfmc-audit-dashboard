@@ -8,13 +8,15 @@ import {
 import './EmailActivity.css';
 import {
   addEventDataJob,
-  updateEventDataJob
+  updateEventDataJob,
+  changeEmailActivitySelected
 } from '../../stateManagement/actions';
 
 const mapStateToProps = (state) => {
   return {
     eventDataJob: state.eventDataJob,
-    eventData: state.eventData
+    eventData: state.eventData,
+    eventDataJobState: state.eventDataJobState
   };
 };
 
@@ -27,7 +29,7 @@ class emailActivity extends React.Component {
     this.props.dispatch(addEventDataJob());
 
     setInterval(() => {
-      if (Object.keys(this.props.eventData).length === 0 ) {
+      if (this.props.eventDataJobState !== 'completed') {
         this.props.dispatch(updateEventDataJob(this.props.eventDataJob));
       } 
     }, 2000);
@@ -41,7 +43,7 @@ class emailActivity extends React.Component {
     let clickData;
     let unsubscribeData;
 
-    if (Object.keys(this.props.eventData).length > 0) {
+    if (this.props.eventDataJobState === 'completed') {
       sendData = (
         <div className="slds-text-heading_medium slds-text-align_center">
           {this.props.eventData.sendData.length}
@@ -93,7 +95,7 @@ class emailActivity extends React.Component {
         <div className="slds-box slds-theme_default emailActivity-body">
           <div className="slds-grid slds-gutter emailActivity-wrapper">
             <div className="slds-col slds-p-horizontal_small emailActivity-card">
-              <div className="slds-box EmailActivityCard">
+              <div className="slds-box EmailActivityCard" onClick={() => {this.props.dispatch(changeEmailActivitySelected('sends'))}}>
                 <div className="slds-text-heading_small slds-text-align_center">
                   <b>Sends</b>
                 </div>
@@ -105,7 +107,7 @@ class emailActivity extends React.Component {
               </div>
             </div>
             <div className="slds-col slds-p-horizontal_small emailActivity-card">
-              <div className="slds-box EmailActivityCard">
+              <div className="slds-box EmailActivityCard" onClick={() => {this.props.dispatch(changeEmailActivitySelected('opens'))}}>
                 <div className="slds-text-heading_small slds-text-align_center">
                   <b>Opens</b>
                 </div>
@@ -115,7 +117,7 @@ class emailActivity extends React.Component {
               </div>
             </div>
             <div className="slds-col slds-p-horizontal_small emailActivity-card">
-              <div className="slds-box EmailActivityCard">
+              <div className="slds-box EmailActivityCard" onClick={() => {this.props.dispatch(changeEmailActivitySelected('bounces'))}}>
                 <div className="slds-text-heading_small slds-text-align_center">
                   <b>Bounces</b>
                 </div>
@@ -125,7 +127,7 @@ class emailActivity extends React.Component {
               </div>
             </div>
             <div className="slds-col slds-p-horizontal_small emailActivity-card">
-              <div className="slds-box EmailActivityCard">
+              <div className="slds-box EmailActivityCard" onClick={() => {this.props.dispatch(changeEmailActivitySelected('clicks'))}}>
                 <div className="slds-text-heading_small slds-text-align_center">
                   <b>Clicks</b>
                 </div>
@@ -135,7 +137,7 @@ class emailActivity extends React.Component {
               </div>
             </div>
             <div className="slds-col slds-p-horizontal_small emailActivity-card">
-              <div className="slds-box EmailActivityCard">
+              <div className="slds-box EmailActivityCard" onClick={() => {this.props.dispatch(changeEmailActivitySelected('unsubscribes'))}}>
                 <div className="slds-text-heading_small slds-text-align_center">
                   <b>Unsubscribes</b>
                 </div>

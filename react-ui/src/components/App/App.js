@@ -6,12 +6,13 @@ import Appheader from '../AppHeader/AppHeader';
 import EmailActivity from '../EmailActivity/EmailActivity';
 import { BrowserRouter, Route } from 'react-router-dom';
 import AccountInventory from '../AccountInventory/AccountInventory';
+import AccountInventoryDetails from '../AccountInventoryDetails/AccountInventoryDetails'
+import EmailActivityDetails from '../EmailActivityDetails/EmailActivityDetails'
 
 const mapStateToProps = (state) => {
   return {
-    value_1: state.value_1,
-    value_2: state.value_2,
-    value_3: state.value_3
+    accountInventorySelected: state.accountInventorySelected,
+    emailActivitySelected: state.emailActivitySelected
     // ...
   };
 };
@@ -31,8 +32,15 @@ class App extends React.Component {
             theme="lightning-blue"
           >
             <Appheader />
-            <EmailActivity />
-            <AccountInventory />
+            <Route path="/">
+              <EmailActivity />
+              { this.props.emailActivitySelected && <EmailActivityDetails />  }
+
+              <AccountInventory />
+              { this.props.accountInventorySelected && <AccountInventoryDetails />  }
+            </Route>
+
+            
           </BrandBand>
         </BrowserRouter>
       </div>

@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import {
   PageHeader,
   IconSettings,
-  Icon
+  Icon,
+  DataTable,
+  DataTableColumn,
+  DataTableCell,
+  Spinner
 } from '@salesforce/design-system-react';
 import { connect } from 'react-redux';
 import { 
@@ -32,31 +36,54 @@ import {
   updateAccountUsersJob,
   addRolesJob,
   updateRolesJob,
+  changeAccountInventorySelected
 } from '../../stateManagement/actions'
+import './AccountInventory.css'
+import { BrowserRouter, Route, Link } from 'react-router-dom';
+import { store } from '../../stateManagement/store' // importing to dispatch action outside component scope
 
 
 const mapStateToProps = (state) => {
   return {
     emailInventory: state.emailInventory,
     emailInventoryJob: state.emailInventoryJob,
+    emailInventoryJobState: state.emailInventoryJobState,
     templateInventory: state.templateInventory,
     templateInventoryJob: state.templateInventoryJob,
+    templateInventoryJobState: state.templateInventoryJobState,
     categories: state.categories,
-    categoriesJob: state.categories,
+    categoriesJob: state.categoriesJob,
+    categoriesJobState: state.categoriesJobState,
     triggeredSends: state.triggeredSends,
     triggeredSendsJob: state.triggeredSendsJob,
+    triggeredSendsJobState: state.triggeredSendsJobState,
     cloudPages: state.cloudPages,
     cloudPagesJob: state.cloudPagesJob,
+    cloudPagesJobState: state.cloudPagesJobState,
     dataExtensions: state.dataExtensions,
     dataExtensionsJob: state.dataExtensionsJob,
+    dataExtensionsJobState: state.dataExtensionsJobState,
     filterData: state.filterData,
     filterDataJob: state.filterDataJob,
+    filterDataJobState: state.filterDataJobState,
     queries: state.queries,
     queriesJob: state.queriesJob,
+    queriesJobState: state.queriesJobState,
     automations: state.automations,
     automationsJob: state.automationsJob,
+    automationsJobState: state.automationsJobState,
     journeys: state.journeys,
-    journeysJob: state.journeysJob
+    journeysJob: state.journeysJob,
+    journeysJobState: state.journeysJobState,
+    businessUnits: state.businessUnits,
+    businessUnitsJob: state.businessUnitsJob,
+    businessUnitsJobState: state.businessUnitsJobState,
+    accountUsers: state.accountUsers,
+    accountUsersJob: state.accountUsersJob,
+    accountUsersJobState: state.accountUsersJobState,
+    roles: state.roles,
+    rolesJob: state.rolesJob,
+    rolesJobState: state.rolesJobState
   };
 };
 
@@ -64,7 +91,23 @@ const mapDispatchToProps = (dispatch) => {
   return { dispatch };
 };
 
+
+const CustomDataTableCell = ({ children, ...props }) => (
+  <DataTableCell {...props}>
+    {console.log(props)}
+    <Link onClick={(e) => {store.dispatch(changeAccountInventorySelected(e.target.innerText))}}>
+      {children}
+    </Link>
+  </DataTableCell>
+)
+CustomDataTableCell.displayName = DataTableCell.displayName;
+
+
 class AccountInventory extends Component {
+  constructor(props) {
+    super(props);
+  }
+
   componentDidMount() {
     this.props.dispatch(addEmailInventoryJob())
     this.props.dispatch(addTemplateInventoryJob())
@@ -76,63 +119,175 @@ class AccountInventory extends Component {
     this.props.dispatch(addQueriesJob())
     this.props.dispatch(addAutomationsJob())
     this.props.dispatch(addJourneysJob())
+    this.props.dispatch(addBusinessUnitsJob())
+    this.props.dispatch(addAccountUsersJob())
+    this.props.dispatch(addRolesJob())
 
 
     setInterval(() => {
-      if (Object.keys(this.props.emailInventory).length === 0 ) {
+      if (this.props.emailInventoryJobState !== 'completed') {
         this.props.dispatch(updateEmailInventoryJob(this.props.emailInventoryJob));
       } 
 
-      if (Object.keys(this.props.templateInventory).length === 0 ) {
+      if (this.props.templateInventoryJobState !== 'completed') {
         this.props.dispatch(updateTemplateInventoryJob(this.props.templateInventoryJob));
       }
       
-      if (Object.keys(this.props.categories).length === 0 ) {
+      if (this.props.categoriesJobState !== 'completed') {
         this.props.dispatch(updateCategoriesJob(this.props.categoriesJob));
       }
 
-      if (Object.keys(this.props.triggeredSends).length === 0 ) {
+      if (this.props.triggeredSendsJobState !== 'completed') {
         this.props.dispatch(updateTriggeredSendsJob(this.props.triggeredSendsJob));
       }
 
-      if (Object.keys(this.props.cloudPages).length === 0 ) {
+      if (this.props.cloudPagesJobState !== 'completed') {
         this.props.dispatch(updateCloudPagesJob(this.props.cloudPagesJob));
       }
 
-      if (Object.keys(this.props.dataExtensions).length === 0 ) {
+      if (this.props.dataExtensionsJobState !== 'completed') {
         this.props.dispatch(updateDataExtensionsJob(this.props.dataExtensionsJob));
       }
 
-      if (Object.keys(this.props.filterData).length === 0 ) {
+      if (this.props.filterDataJobState !== 'completed') {
         this.props.dispatch(updateFilterDataJob(this.props.filterDataJob));
       }
 
-      if (Object.keys(this.props.queries).length === 0 ) {
+      if (this.props.queriesJobState !== 'completed') {
         this.props.dispatch(updateQueriesJob(this.props.queriesJob));
       }
 
-      if (Object.keys(this.props.automations).length === 0 ) {
+      if (this.props.automationsJobState !== 'completed') {
         this.props.dispatch(updateAutomationsJob(this.props.automationsJob));
       }
 
-      if (Object.keys(this.props.journeys).length === 0 ) {
+      if (this.props.journeysJobState !== 'completed' ) {
         this.props.dispatch(updateJourneysJob(this.props.journeysJob));
       }
+
+      if (this.props.businessUnitsJobState !== 'completed') {
+        this.props.dispatch(updateBusinessUnitsJob(this.props.businessUnitsJob))
+      }
+
+      if (this.props.accountUsersJobState !== 'completed') {
+        this.props.dispatch(updateAccountUsersJob(this.props.accountUsersJob))
+      }
+
+      if (this.props.rolesJobState !== 'completed') {
+        this.props.dispatch(updateRolesJob(this.props.rolesJob))
+      }
+
     }, 2000 )
-  }
-  
+  }  
+
+
   render() {
+
+    let displayResult;
+    let inventoryItems;
+
+    if (
+      this.props.emailInventoryJobState === 'completed' &&
+      this.props.templateInventoryJobState === 'completed'
+
+    ) {
+      inventoryItems = [
+        {
+          object: 'Html Emails',
+          count: this.props.emailInventory.htmlEmailData.count 
+        },
+        {
+          object: 'Templated Emails',
+          count: this.props.emailInventory.templateEmailData.count 
+        },
+        {
+          object: 'Text Only Emails',
+          count: this.props.emailInventory.textOnlyEmailData.count
+        },
+        {
+          object: 'Templates',
+          count: this.props.templateInventory.count
+        },
+        {
+          object: 'Categories',
+          count: this.props.categories.count
+        },
+        {
+          object: 'Triggered Sends',
+          count: this.props.triggeredSends.length
+        },
+        {
+          object: 'Cloud Pages',
+          count: this.props.cloudPages.count
+        },
+        {
+          object: 'Data Extensions',
+          count: this.props.dataExtensions.length
+        },
+        {
+          object: 'Filters',
+          count: this.props.filterData.length
+        },
+        {
+          object: 'Queries',
+          count: this.props.queries.length
+        },
+        {
+          object: 'Automations',
+          count: this.props.automations.length
+        },
+        {
+          object: 'Journeys',
+          count: this.props.journeys.count
+        },
+        // Might remove Business units if it only returns the BU the app runs in
+        {
+          object: 'Business Units',
+          count: this.props.businessUnits.length
+        },
+        {
+          object: 'Users',
+          count: this.props.accountUsers.length
+        },
+      ]
+    } else {
+      inventoryItems = []    
+    }
+
+    
+
+    let columns = [
+      <DataTableColumn 
+        key='object'
+        label='Object'
+        property='object'
+      >
+        <CustomDataTableCell />
+      </DataTableColumn>,
+      <DataTableColumn 
+        key='count'
+        label='Count'
+        property='count'
+      />
+    ]
+
     return (
-      <div>
+      <div className="AccountInventory-panel">
         <IconSettings iconPage="/icons/">
-          <PageHeader
+          <PageHeader 
             icon={<Icon category="standard" />}
             title="Account Inventory"
             variant="object-home"
             className="AccountActivityHeader"
           />
         </IconSettings>
+
+        <DataTable items={inventoryItems}>
+          {columns}
+        </DataTable>
+
       </div>
+      
     );
   }
 }

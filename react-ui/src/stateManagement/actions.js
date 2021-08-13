@@ -15,7 +15,8 @@ export const addEventDataJob = () => {
       dispatch({
         type: 'ADD_GET_ALL_EVENT_DATA_JOB_SUCCESS',
         payload: {
-          eventDataJob: response.data.id
+          eventDataJob: response.data.id,
+          eventDataJobState: response.data.state
         }
       });
     } catch (e) {
@@ -39,7 +40,8 @@ export const updateEventDataJob = (id) => {
         dispatch({
           type: 'UPDATE_GET_ALL_EVENT_DATA_JOB_SUCCESS',
           payload: {
-            eventData: response.data.result
+            eventData: response.data.result,
+            eventDataJobState: response.data.state
           }
         });
       }
@@ -63,7 +65,8 @@ export const addEmailInventoryJob = () => {
       dispatch({
         type: 'ADD_EMAIL_INVENTORY_JOB_SUCCESS',
         payload: {
-          emailInventoryJob: response.data.id
+          emailInventoryJob: response.data.id,
+          emailInventoryJobState: response.data.state
         }
       });
     } catch (e) {
@@ -87,7 +90,8 @@ export const updateEmailInventoryJob = (id) => {
         dispatch({
           type: 'UPDATE_EMAIL_INVENTORY_SUCCESS',
           payload: {
-            emailInventory: response.data.result
+            emailInventory: response.data.result,
+            emailInventoryJobState: response.data.state
           }
         });
       }
@@ -111,7 +115,8 @@ export const addTemplateInventoryJob = () => {
       dispatch({
         type: 'ADD_TEMPLATE_INVENTORY_JOB_SUCCESS',
         payload: {
-          templateInventoryJob: response.data.id
+          templateInventoryJob: response.data.id,
+          templateInventoryJobState: response.data.state
         }
       });
     } catch (e) {
@@ -135,7 +140,8 @@ export const updateTemplateInventoryJob = (id) => {
         dispatch({
           type: 'UPDATE_TEMPLATE_INVENTORY_SUCCESS',
           payload: {
-            templateInventory: response.data.result
+            templateInventory: response.data.result,
+            templateInventoryJobState: response.data.state
           }
         });
       }
@@ -159,7 +165,8 @@ export const addCategoriesJob = () => {
       dispatch({
         type: 'ADD_CATEGORIES_JOB_SUCCESS',
         payload: {
-          categoriesJob: response.data.id
+          categoriesJob: response.data.id,
+          categoriesJobState: response.data.state
         }
       });
     } catch (e) {
@@ -183,7 +190,8 @@ export const updateCategoriesJob = (id) => {
         dispatch({
           type: 'UPDATE_CATEGORIES_SUCCESS',
           payload: {
-            categories: response.data.result
+            categories: response.data.result,
+            categoriesJobState: response.data.state
           }
         });
       }
@@ -207,7 +215,8 @@ export const addTriggeredSendsJob = () => {
       dispatch({
         type: 'ADD_TRIGGERED_SENDS_JOB_SUCCESS',
         payload: {
-          triggeredSendsJob: response.data.id
+          triggeredSendsJob: response.data.id,
+          triggeredSendsJobState: response.data.state
         }
       });
     } catch (e) {
@@ -231,7 +240,8 @@ export const updateTriggeredSendsJob = (id) => {
         dispatch({
           type: 'UPDATE_TRIGGERED_SENDS_SUCCESS',
           payload: {
-            triggeredSends: response.data.result
+            triggeredSends: response.data.result,
+            triggeredSendsJobState: response.data.state
           }
         });
       }
@@ -255,7 +265,8 @@ export const addCloudPagesJob = () => {
       dispatch({
         type: 'ADD_CLOUD_PAGES_JOB_SUCCESS',
         payload: {
-          cloudPagesJob: response.data.id
+          cloudPagesJob: response.data.id,
+          cloudPagesJobState: response.data.state
         }
       });
     } catch (e) {
@@ -279,7 +290,8 @@ export const updateCloudPagesJob = (id) => {
         dispatch({
           type: 'UPDATE_CLOUD_PAGES_SUCCESS',
           payload: {
-            cloudPages: response.data.result
+            cloudPages: response.data.result,
+            cloudPagesJobState: response.data.state
           }
         });
       }
@@ -303,7 +315,8 @@ export const addDataExtensionsJob = () => {
       dispatch({
         type: 'ADD_DATA_EXTENSIONS_JOB_SUCCESS',
         payload: {
-          dataExtensionsJob: response.data.id
+          dataExtensionsJob: response.data.id,
+          dataExtensionsJobState: response.data.state
         }
       });
     } catch (e) {
@@ -327,7 +340,8 @@ export const updateDataExtensionsJob = (id) => {
         dispatch({
           type: 'UPDATE_DATA_EXTENSIONS_SUCCESS',
           payload: {
-            dataExtensions: response.data.result
+            dataExtensions: response.data.result,
+            dataExtensionsJobState: response.data.state
           }
         });
       }
@@ -351,7 +365,8 @@ export const addFilterDataJob = () => {
       dispatch({
         type: 'ADD_FILTER_DATA_JOB_SUCCESS',
         payload: {
-          filterDataJob: response.data.id
+          filterDataJob: response.data.id,
+          filterDataJobState: response.data.state
         }
       });
     } catch (e) {
@@ -372,10 +387,12 @@ export const updateFilterDataJob = (id) => {
       let response = await axios.get(`/api/getFilterData/${id}`);
 
       if (response.data.state === 'completed') {
+
         dispatch({
           type: 'UPDATE_FILTER_DATA_SUCCESS',
           payload: {
-            filterData: response.data.result
+            filterData: response.data.result,
+            filterDataJobState: response.data.state
           }
         });
       }
@@ -399,7 +416,8 @@ export const addQueriesJob = () => {
       dispatch({
         type: 'ADD_QUERIES_JOB_SUCCESS',
         payload: {
-          queriesJob: response.data.id
+          queriesJob: response.data.id,
+          queriesJobState: response.data.state
         }
       });
     } catch (e) {
@@ -423,7 +441,8 @@ export const updateQueriesJob = (id) => {
         dispatch({
           type: 'UPDATE_QUERIES_SUCCESS',
           payload: {
-            queries: response.data.result
+            queries: response.data.result,
+            queriesJobState: response.data.state
           }
         });
       }
@@ -447,7 +466,8 @@ export const addAutomationsJob = () => {
       dispatch({
         type: 'ADD_AUTOMATIONS_JOB_SUCCESS',
         payload: {
-          automationsJob: response.data.id
+          automationsJob: response.data.id,
+          automationsJobState: response.data.state
         }
       });
     } catch (e) {
@@ -471,7 +491,8 @@ export const updateAutomationsJob = (id) => {
         dispatch({
           type: 'UPDATE_AUTOMATIONS_SUCCESS',
           payload: {
-            automations: response.data.result
+            automations: response.data.result,
+            automationsJobState: response.data.state
           }
         });
       }
@@ -495,7 +516,8 @@ export const addJourneysJob = () => {
       dispatch({
         type: 'ADD_JOURNEYS_JOB_SUCCESS',
         payload: {
-          journeysJob: response.data.id
+          journeysJob: response.data.id,
+          journeysJobState: response.data.state
         }
       });
     } catch (e) {
@@ -519,7 +541,8 @@ export const updateJourneysJob = (id) => {
         dispatch({
           type: 'UPDATE_JOURNEYS_SUCCESS',
           payload: {
-            journeys: response.data.result
+            journeys: response.data.result,
+            journeysJobState: response.data.state
           }
         });
       }
@@ -543,7 +566,8 @@ export const addBusinessUnitsJob = () => {
       dispatch({
         type: 'ADD_BUSINESS_UNITS_JOB_SUCCESS',
         payload: {
-          businessUnitsJob: response.data.id
+          businessUnitsJob: response.data.id,
+          businessUnitsJobState: response.data.state
         }
       });
     } catch (e) {
@@ -567,7 +591,8 @@ export const updateBusinessUnitsJob = (id) => {
         dispatch({
           type: 'UPDATE_BUSINESS_UNITS_SUCCESS',
           payload: {
-            businessUnits: response.data.result
+            businessUnits: response.data.result,
+            businessUnitsJobState: response.data.state
           }
         });
       }
@@ -591,7 +616,8 @@ export const addAccountUsersJob = () => {
       dispatch({
         type: 'ADD_ACCOUNT_USERS_JOB_SUCCESS',
         payload: {
-          accountUsersJob: response.data.id
+          accountUsersJob: response.data.id,
+          accountUsersJobState: response.data.state
         }
       });
     } catch (e) {
@@ -615,7 +641,8 @@ export const updateAccountUsersJob = (id) => {
         dispatch({
           type: 'UPDATE_ACCOUNT_USERS_SUCCESS',
           payload: {
-            accountUsers: response.data.result
+            accountUsers: response.data.result,
+            accountUsersJobState: response.data.state
           }
         });
       }
@@ -639,7 +666,8 @@ export const addRolesJob = () => {
       dispatch({
         type: 'ADD_ROLES_JOB_SUCCESS',
         payload: {
-          rolesJob: response.data.id
+          rolesJob: response.data.id,
+          rolesJobState: response.data.state
         }
       });
     } catch (e) {
@@ -663,7 +691,8 @@ export const updateRolesJob = (id) => {
         dispatch({
           type: 'UPDATE_ROLES_SUCCESS',
           payload: {
-            roles: response.data.result
+            roles: response.data.result,
+            rolesJobState: response.data.state
           }
         });
       }
@@ -674,3 +703,25 @@ export const updateRolesJob = (id) => {
     }
   };
 };
+
+export const changeAccountInventorySelected = (accountInventorySelected) => {
+  return async (dispatch) => {
+    dispatch({
+      type: 'CHANGE_ACCOUNT_INVENTORY_SELECTED',
+      payload: { 
+        accountInventorySelected: accountInventorySelected
+      }
+    })
+  }
+}
+
+export const changeEmailActivitySelected = (emailActivitySelected) => {
+  return async (dispatch) => {
+    dispatch({
+      type: 'CHANGE_EMAIL_ACTIVITY_SELECTED',
+      payload: { 
+        emailActivitySelected: emailActivitySelected
+      }
+    })
+  }
+}
