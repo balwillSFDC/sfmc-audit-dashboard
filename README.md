@@ -16,7 +16,7 @@ The SFMC Audit dashboard gives Admins a 360 view 🌎 of their Account in an ins
 
 ## Installing the App
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/balwillSFDC/sfmc-audit-dashboard)
 
 ## Local Development
 
