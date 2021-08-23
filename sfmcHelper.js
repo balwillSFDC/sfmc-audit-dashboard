@@ -613,7 +613,7 @@ async function getAuditEvents() {
 
   let auditEventRequestConfig = {
     method: 'get',
-    url: `${origin}asset/v1/content/assets/?$page=1&$pagesize=10000&$filter=assetType.name=webpage`,
+    url: `${origin}data/v1/audit/auditEvents?$pagesize=10000`,
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${accessToken}`
@@ -621,10 +621,10 @@ async function getAuditEvents() {
   };
 
   try {
-    let cloudPageRequestResponse = await axios(cloudPageRequestConfig);
-    let cloudPageData = cloudPageRequestResponse.data;
+    let auditEventRequestResponse = await axios(auditEventRequestConfig);
+    let auditEventData = auditEventRequestResponse.data;
 
-    return cloudPageData;
+    return auditEventData;
   } catch (e) {
     console.log(e);
   }
@@ -646,6 +646,82 @@ async function getAllEventData() {
   };
 }
 
+function getSubscribers() {
+  let subscriberOptions = {
+    props: [ 
+      'ID',
+      'SubscriberKey',
+      'EmailAddress',
+      'CreatedDate',
+      'Status',
+      'UnsubscribedDate'
+    ]
+  };
+
+  let subscriber = sfmcNode.subscriber(subscriberOptions);
+
+  let subscriberResults = new Promise((resolve, reject) => {
+    subscriber.get((err, res) => {
+      if (err) console.log(err);
+      if (res) resolve(res.body.Results);
+    });
+  });
+  
+  return subscriberResults;
+  
+}
+
+// Identifies all duplicate subscribers based on if they share the same email address. Updates State with the results
+function identifyDuplicateSubscribers(subscribers) {
+  const lookup = subscribers.reduce((a, e) => {
+    a[e.EmailAddress] = ++a[e.EmailAddress] || 0
+    return a
+  }, {});
+  
+  let duplicateSubscribers = subscribers.filter(a => lookup[a.EmailAddress]);
+  return duplicateSubscribers
+};
+
+// Identifies all Active Subscribers based on if their Status = 'Active'. Updates State with the results
+function identifyActiveSubscribers(subscribers) {
+  let activeSubscribers = subscribers.filter(a => a.Status === 'Active')
+
+  return activeSubscribers
+}
+
+// Identifies all Unsubscribed Subscribers based on if their Status = 'Unsubscribed'. Updates State with the results
+function identifyUnsubscribedSubscribers(subscribers) {
+  let unsubscribedSubscribers = subscribers.filter(a => a.Status === 'Unsubscribed')
+
+  return unsubscribedSubscribers
+}
+
+// Identifies all Bounced Subscribers based on if their Status = 'Bounced'. Updates State with the results
+function identifyBouncedSubscribers(subscribers) {
+  let bouncedSubscribers = subscribers.filter(a => a.Status === 'Bounced')
+
+  return bouncedSubscribers
+}
+
+async function getSubscribersSummary() {
+  let allSubscribers = await getSubscribers()
+
+  let duplicateSubscribers = identifyDuplicateSubscribers(allSubscribers)
+  let activeSubscribers = identifyActiveSubscribers(allSubscribers)
+  let unsubscribedSubscribers = identifyUnsubscribedSubscribers(allSubscribers)
+  let bouncedSubscribers = identifyBouncedSubscribers(allSubscribers)
+
+  return {
+    allSubscribers,
+    duplicateSubscribers,
+    activeSubscribers,
+    unsubscribedSubscribers,
+    bouncedSubscribers
+  }
+}
+
+
+
 module.exports = {
   getAllEventData,
   getEmailInventory,
@@ -660,5 +736,7 @@ module.exports = {
   getJourneys,
   getBusinessUnits,
   getAccountUsers,
-  getRoles
+  getRoles,
+  getSubscribersSummary,
+  getAuditEvents
 };

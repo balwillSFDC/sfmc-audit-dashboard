@@ -1,6 +1,12 @@
 const initialState = {
   // Define initial state below
-  eventData: {},
+  eventData: {
+    sendData: [],
+    openData: [],
+    clickData: [],
+    unsubscribeData: [],
+    bounceData: []
+  },
   eventDataJob: 0,
   eventDataJobState: '',
   emailInventory: {},
@@ -24,26 +30,41 @@ const initialState = {
   filterData: {},
   filterDataJob: 0,
   filterDataJobState: '',
-  queries: {},
+  queries: [],
   queriesJob: 0,
   queriesJobState: '',
-  automations: {},
+  automations: [],
   automationsJob: 0,
   automationsJobState: '',
-  journeys: {},
+  journeys: [],
   journeysJob: 0,
   journeysJobState: '',
-  businessUnits: {},
+  businessUnits: [],
   businessUnitsJob: 0,
   businessUnitsJobState: '',
-  accountUsers: {},
+  accountUsers: [],
   accountUsersJob: 0,
   accountUsersJobState: '',
-  roles: {},
+  roles: [],
   rolesJob: 0,
   rolesJobState: '',
+  subscribers: {
+    allSubscribers: [],
+    duplicateSubscribers: [],
+    activeSubscribers: [],
+    bouncedSubscribers: [],
+    unsubscribedSubscribers: []
+  },
+  subscribersJob: 0,
+  subscribersJobState: '',
+  auditEvents: {
+    items: []
+  },
+  auditEventsJob: 0,
+  auditEventsJobState: '',
   accountInventorySelected: '',
   emailActivitySelected: '',
+  subscribersSummarySelected: ''
   // ...
 };
 

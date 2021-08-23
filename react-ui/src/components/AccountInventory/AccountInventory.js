@@ -6,7 +6,10 @@ import {
   DataTable,
   DataTableColumn,
   DataTableCell,
-  Spinner
+  Spinner,
+  Card,
+  Button,
+  MediaObject
 } from '@salesforce/design-system-react';
 import { connect } from 'react-redux';
 import { 
@@ -36,7 +39,8 @@ import {
   updateAccountUsersJob,
   addRolesJob,
   updateRolesJob,
-  changeAccountInventorySelected
+  changeAccountInventorySelected,
+  clearAccountInventorySelected
 } from '../../stateManagement/actions'
 import './AccountInventory.css'
 import { BrowserRouter, Route, Link } from 'react-router-dom';
@@ -91,11 +95,19 @@ const mapDispatchToProps = (dispatch) => {
   return { dispatch };
 };
 
+// Handles the logic for changing the details if User selects a different item or clearing it if they select the same item 
+const handleClick = (e) => {
+  let state = store.getState()
+  if (state.accountInventorySelected === e.target.innerText) {
+    store.dispatch(clearAccountInventorySelected())
+  } else {
+    store.dispatch(changeAccountInventorySelected(e.target.innerText))
+  }
+}
 
 const CustomDataTableCell = ({ children, ...props }) => (
   <DataTableCell {...props}>
-    {console.log(props)}
-    <Link onClick={(e) => {store.dispatch(changeAccountInventorySelected(e.target.innerText))}}>
+    <Link onClick={handleClick}>
       {children}
     </Link>
   </DataTableCell>
@@ -106,9 +118,182 @@ CustomDataTableCell.displayName = DataTableCell.displayName;
 class AccountInventory extends Component {
   constructor(props) {
     super(props);
+
+  }
+  
+  componentDidMount() {
+    if (
+      this.props.emailInventoryJobState === '' &&
+      this.props.templateInventoryJobState === '' &&
+      this.props.categoriesJobState === '' &&
+      this.props.triggeredSendsJobState === '' &&
+      this.props.cloudPagesJobState === '' &&
+      this.props.dataExtensionsJobState === '' &&
+      this.props.filterDataJobState === '' &&
+      this.props.queriesJobState === '' &&
+      this.props.automationsJobState === '' &&
+      this.props.journeysJobState === '' && 
+      this.props.businessUnitsJobState === '' &&
+      this.props.accountUsersJobState === '' &&
+      this.props.rolesJobState === ''
+    ) {
+      this.props.dispatch(addEmailInventoryJob())
+      this.props.dispatch(addTemplateInventoryJob())
+      this.props.dispatch(addCategoriesJob())
+      this.props.dispatch(addTriggeredSendsJob())
+      this.props.dispatch(addCloudPagesJob())
+      this.props.dispatch(addDataExtensionsJob())
+      this.props.dispatch(addFilterDataJob())
+      this.props.dispatch(addQueriesJob())
+      this.props.dispatch(addAutomationsJob())
+      this.props.dispatch(addJourneysJob())
+      this.props.dispatch(addBusinessUnitsJob())
+      this.props.dispatch(addAccountUsersJob())
+      this.props.dispatch(addRolesJob())
+
+      setInterval(() => {
+        if (this.props.emailInventoryJobState !== 'completed') {
+          this.props.dispatch(updateEmailInventoryJob(this.props.emailInventoryJob));
+        } 
+
+        if (this.props.templateInventoryJobState !== 'completed') {
+          this.props.dispatch(updateTemplateInventoryJob(this.props.templateInventoryJob));
+        }
+        
+        if (this.props.categoriesJobState !== 'completed') {
+          this.props.dispatch(updateCategoriesJob(this.props.categoriesJob));
+        }
+
+        if (this.props.triggeredSendsJobState !== 'completed') {
+          this.props.dispatch(updateTriggeredSendsJob(this.props.triggeredSendsJob));
+        }
+
+        if (this.props.cloudPagesJobState !== 'completed') {
+          this.props.dispatch(updateCloudPagesJob(this.props.cloudPagesJob));
+        }
+
+        if (this.props.dataExtensionsJobState !== 'completed') {
+          this.props.dispatch(updateDataExtensionsJob(this.props.dataExtensionsJob));
+        }
+
+        if (this.props.filterDataJobState !== 'completed') {
+          this.props.dispatch(updateFilterDataJob(this.props.filterDataJob));
+        }
+
+        if (this.props.queriesJobState !== 'completed') {
+          this.props.dispatch(updateQueriesJob(this.props.queriesJob));
+        }
+
+        if (this.props.automationsJobState !== 'completed') {
+          this.props.dispatch(updateAutomationsJob(this.props.automationsJob));
+        }
+
+        if (this.props.journeysJobState !== 'completed' ) {
+          this.props.dispatch(updateJourneysJob(this.props.journeysJob));
+        }
+
+        if (this.props.businessUnitsJobState !== 'completed') {
+          this.props.dispatch(updateBusinessUnitsJob(this.props.businessUnitsJob))
+        }
+
+        if (this.props.accountUsersJobState !== 'completed') {
+          this.props.dispatch(updateAccountUsersJob(this.props.accountUsersJob))
+        }
+
+        if (this.props.rolesJobState !== 'completed') {
+          this.props.dispatch(updateRolesJob(this.props.rolesJob))
+        }
+
+      }, 2000 )
+    }
+  }  
+
+
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      prevProps.emailInventoryJobState === 'completed' &&
+      prevProps.templateInventoryJobState === 'completed' &&
+      prevProps.categoriesJobState === 'completed' &&
+      prevProps.triggeredSendsJobState === 'completed' &&
+      prevProps.cloudPagesJobState === 'completed' &&
+      prevProps.dataExtensionsJobState === 'completed' &&
+      prevProps.filterDataJobState === 'completed' &&
+      prevProps.queriesJobState === 'completed' &&
+      prevProps.automationsJobState === 'completed' &&
+      prevProps.journeysJobState === 'completed' && 
+      prevProps.businessUnitsJobState === 'completed' &&
+      prevProps.accountUsersJobState === 'completed' &&
+      this.props.emailInventoryJobState !== 'completed' &&
+      this.props.templateInventoryJobState !== 'completed' &&
+      this.props.categoriesJobState !== 'completed' &&
+      this.props.triggeredSendsJobState !== 'completed' &&
+      this.props.cloudPagesJobState !== 'completed' &&
+      this.props.dataExtensionsJobState !== 'completed' &&
+      this.props.filterDataJobState !== 'completed' &&
+      this.props.queriesJobState !== 'completed' &&
+      this.props.automationsJobState !== 'completed' &&
+      this.props.journeysJobState !== 'completed' && 
+      this.props.businessUnitsJobState !== 'completed' &&
+      this.props.accountUsersJobState !== 'completed'
+    ) {
+      setInterval(() => {
+        if (this.props.emailInventoryJobState !== 'completed') {
+          this.props.dispatch(updateEmailInventoryJob(this.props.emailInventoryJob));
+        } 
+
+        if (this.props.templateInventoryJobState !== 'completed') {
+          this.props.dispatch(updateTemplateInventoryJob(this.props.templateInventoryJob));
+        }
+        
+        if (this.props.categoriesJobState !== 'completed') {
+          this.props.dispatch(updateCategoriesJob(this.props.categoriesJob));
+        }
+
+        if (this.props.triggeredSendsJobState !== 'completed') {
+          this.props.dispatch(updateTriggeredSendsJob(this.props.triggeredSendsJob));
+        }
+
+        if (this.props.cloudPagesJobState !== 'completed') {
+          this.props.dispatch(updateCloudPagesJob(this.props.cloudPagesJob));
+        }
+
+        if (this.props.dataExtensionsJobState !== 'completed') {
+          this.props.dispatch(updateDataExtensionsJob(this.props.dataExtensionsJob));
+        }
+
+        if (this.props.filterDataJobState !== 'completed') {
+          this.props.dispatch(updateFilterDataJob(this.props.filterDataJob));
+        }
+
+        if (this.props.queriesJobState !== 'completed') {
+          this.props.dispatch(updateQueriesJob(this.props.queriesJob));
+        }
+
+        if (this.props.automationsJobState !== 'completed') {
+          this.props.dispatch(updateAutomationsJob(this.props.automationsJob));
+        }
+
+        if (this.props.journeysJobState !== 'completed' ) {
+          this.props.dispatch(updateJourneysJob(this.props.journeysJob));
+        }
+
+        if (this.props.businessUnitsJobState !== 'completed') {
+          this.props.dispatch(updateBusinessUnitsJob(this.props.businessUnitsJob))
+        }
+
+        if (this.props.accountUsersJobState !== 'completed') {
+          this.props.dispatch(updateAccountUsersJob(this.props.accountUsersJob))
+        }
+
+        // if (this.props.rolesJobState !== 'completed') {
+        //   this.props.dispatch(updateRolesJob(this.props.rolesJob))
+        // }
+
+      }, 2000 )
+    }
   }
 
-  componentDidMount() {
+  handleRefresh = () => {
     this.props.dispatch(addEmailInventoryJob())
     this.props.dispatch(addTemplateInventoryJob())
     this.props.dispatch(addCategoriesJob())
@@ -121,75 +306,18 @@ class AccountInventory extends Component {
     this.props.dispatch(addJourneysJob())
     this.props.dispatch(addBusinessUnitsJob())
     this.props.dispatch(addAccountUsersJob())
-    this.props.dispatch(addRolesJob())
-
-
-    setInterval(() => {
-      if (this.props.emailInventoryJobState !== 'completed') {
-        this.props.dispatch(updateEmailInventoryJob(this.props.emailInventoryJob));
-      } 
-
-      if (this.props.templateInventoryJobState !== 'completed') {
-        this.props.dispatch(updateTemplateInventoryJob(this.props.templateInventoryJob));
-      }
-      
-      if (this.props.categoriesJobState !== 'completed') {
-        this.props.dispatch(updateCategoriesJob(this.props.categoriesJob));
-      }
-
-      if (this.props.triggeredSendsJobState !== 'completed') {
-        this.props.dispatch(updateTriggeredSendsJob(this.props.triggeredSendsJob));
-      }
-
-      if (this.props.cloudPagesJobState !== 'completed') {
-        this.props.dispatch(updateCloudPagesJob(this.props.cloudPagesJob));
-      }
-
-      if (this.props.dataExtensionsJobState !== 'completed') {
-        this.props.dispatch(updateDataExtensionsJob(this.props.dataExtensionsJob));
-      }
-
-      if (this.props.filterDataJobState !== 'completed') {
-        this.props.dispatch(updateFilterDataJob(this.props.filterDataJob));
-      }
-
-      if (this.props.queriesJobState !== 'completed') {
-        this.props.dispatch(updateQueriesJob(this.props.queriesJob));
-      }
-
-      if (this.props.automationsJobState !== 'completed') {
-        this.props.dispatch(updateAutomationsJob(this.props.automationsJob));
-      }
-
-      if (this.props.journeysJobState !== 'completed' ) {
-        this.props.dispatch(updateJourneysJob(this.props.journeysJob));
-      }
-
-      if (this.props.businessUnitsJobState !== 'completed') {
-        this.props.dispatch(updateBusinessUnitsJob(this.props.businessUnitsJob))
-      }
-
-      if (this.props.accountUsersJobState !== 'completed') {
-        this.props.dispatch(updateAccountUsersJob(this.props.accountUsersJob))
-      }
-
-      if (this.props.rolesJobState !== 'completed') {
-        this.props.dispatch(updateRolesJob(this.props.rolesJob))
-      }
-
-    }, 2000 )
-  }  
+    // this.props.dispatch(addRolesJob())
+  }
 
 
   render() {
-
     let displayResult;
     let inventoryItems;
+    let info;
 
     if (
       this.props.emailInventoryJobState === 'completed' &&
       this.props.templateInventoryJobState === 'completed'
-
     ) {
       inventoryItems = [
         {
@@ -250,11 +378,20 @@ class AccountInventory extends Component {
           count: this.props.accountUsers.length
         },
       ]
+
+      info = (
+        <div className="slds-text-color_success">
+          Finished - Results retrieved! 
+        </div>
+      )
     } else {
+      info = (
+        <div className="slds-text-color_weak">
+          Retrieving results...
+        </div>
+      )
       inventoryItems = []    
     }
-
-    
 
     let columns = [
       <DataTableColumn 
@@ -273,19 +410,35 @@ class AccountInventory extends Component {
 
     return (
       <div className="AccountInventory-panel">
-        <IconSettings iconPage="/icons/">
-          <PageHeader 
-            icon={<Icon category="standard" />}
-            title="Account Inventory"
-            variant="object-home"
-            className="AccountActivityHeader"
-          />
+        <IconSettings iconPath='/icons/'>
+          <div className='slds-grid slds-grid_vertical'>
+            <Card
+              id='ExampleCard'
+              heading='Subscribers Summary'
+              headerActions={
+                <Button label="Refresh" onClick={this.handleRefresh} /> 
+              }
+              header={
+                <MediaObject 
+                  body={
+                    <>
+                      <div className='slds-text-heading_medium'>
+                        Account Inventory
+                      </div>
+                      {info}
+                    </>
+                  }
+                  figure={<Icon category="standard" name="account" />}
+                  verticalCenter
+                />
+              }
+            >
+              <DataTable items={inventoryItems}>
+                {columns}
+              </DataTable>
+            </Card>
+          </div>
         </IconSettings>
-
-        <DataTable items={inventoryItems}>
-          {columns}
-        </DataTable>
-
       </div>
       
     );

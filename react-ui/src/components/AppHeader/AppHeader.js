@@ -49,6 +49,45 @@ class AppHeader extends React.Component {
                     </span>
                   </Link>
                 </li>
+
+                <li
+                  className={`slds-context-bar__item ${
+                    this.state.pageSelected === '/auditTrail'
+                      ? 'slds-is-active'
+                      : null
+                  }`}
+                  id="audit-trail-link"
+                >
+                  <Link
+                    to="/auditTrail"
+                    className="slds-context-bar__label-action"
+                    onClick={() => this.setState({ pageSelected: '/auditTrail' })}
+                  >
+                    <span className="slds-truncate" title="AuditTrail">
+                      Audit Trail
+                    </span>
+                  </Link>
+                </li>
+
+                <li
+                  className={`slds-context-bar__item ${
+                    this.state.pageSelected === '/download'
+                      ? 'slds-is-active'
+                      : null
+                  }`}
+                  id="download-link"
+                >
+                  <Link
+                    to="/download"
+                    className="slds-context-bar__label-action"
+                    onClick={() => this.setState({ pageSelected: '/download' })}
+                  >
+                    <span className="slds-truncate" title="Download">
+                      Download Data
+                    </span>
+                  </Link>
+                </li>
+                
                 <li
                   className={`slds-context-bar__item ${
                     this.state.pageSelected === '/about'

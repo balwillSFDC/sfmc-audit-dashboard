@@ -1,0 +1,9 @@
+.downloadDataPage {
+  background-color: white;
+}
+
+.downloadButton {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+}

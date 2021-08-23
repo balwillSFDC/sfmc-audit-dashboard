@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css';
+import '../App/App.css';
 import { connect } from 'react-redux';
 import { BrandBand, Button } from '@salesforce/design-system-react';
 import Appheader from '../AppHeader/AppHeader';
@@ -8,11 +8,17 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import AccountInventory from '../AccountInventory/AccountInventory';
 import AccountInventoryDetails from '../AccountInventoryDetails/AccountInventoryDetails'
 import EmailActivityDetails from '../EmailActivityDetails/EmailActivityDetails'
+import SubscribersSummary from '../SubscribersSummary/SubscribersSummary'
+import SubscribersSummaryDetails from '../SubscribersSummaryDetails/SubscribersSummaryDetails';
+import AuditTrail from '../AuditTrail/AuditTrail';
+import DownloadDataPage from '../DownloadDataPage/DownloadDataPage';
+import About from '../About/About';
 
 const mapStateToProps = (state) => {
   return {
     accountInventorySelected: state.accountInventorySelected,
-    emailActivitySelected: state.emailActivitySelected
+    emailActivitySelected: state.emailActivitySelected,
+    subscribersSummarySelected: state.subscribersSummarySelected,
     // ...
   };
 };
@@ -21,7 +27,16 @@ const mapDispatchToProps = (dispatch) => {
   return { dispatch };
 };
 
+
+
 class App extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+
+    }
+  }
+  
   render() {
     return (
       <div className="App">
@@ -32,7 +47,10 @@ class App extends React.Component {
             theme="lightning-blue"
           >
             <Appheader />
-            <Route path="/">
+            <Route exact path="/">
+              <SubscribersSummary /> 
+              { this.props.subscribersSummarySelected && <SubscribersSummaryDetails />  }
+
               <EmailActivity />
               { this.props.emailActivitySelected && <EmailActivityDetails />  }
 
@@ -40,7 +58,17 @@ class App extends React.Component {
               { this.props.accountInventorySelected && <AccountInventoryDetails />  }
             </Route>
 
-            
+            <Route exact path='/auditTrail'>
+              <AuditTrail /> 
+            </Route>
+
+            <Route exact path='/download'>
+              <DownloadDataPage /> 
+            </Route>
+
+            <Route exact path='/about'>
+              <About />
+            </Route>
           </BrandBand>
         </BrowserRouter>
       </div>

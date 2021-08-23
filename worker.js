@@ -15,7 +15,9 @@ const {
   getJourneys,
   getBusinessUnits,
   getAccountUsers,
-  getRoles
+  getRoles,
+  getSubscribersSummary,
+  getAuditEvents
 } = require('./sfmcHelper.js');
 
 let REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
@@ -45,6 +47,9 @@ function start() {
   let businessUnitInfoQueue = new Queue('businessUnitInfo', REDIS_URL);
   let accountUserQueue = new Queue('accountUserInventory', REDIS_URL);
   let roleInventoryQueue = new Queue('roleInventory', REDIS_URL);
+  let subscriberInventoryQueue = new Queue('subscriberInventory', REDIS_URL)
+  let auditEventsQueue = new Queue('auditEvents', REDIS_URL)
+  
 
   eventDataQueue.process(maxJobsPerWorker, async (job) => {
     console.log(job.data);
@@ -171,6 +176,25 @@ function start() {
       return rolesResult;
     }
   });
+
+  subscriberInventoryQueue.process(maxJobsPerWorker, async (job) => {
+    console.log(job.data);
+
+    if (job.data.jobType == 'GET_SUBSCRIBERS') {
+      let subscribersResult = await getSubscribersSummary();
+      return subscribersResult
+    }
+  })
+
+  auditEventsQueue.process(maxJobsPerWorker, async (job) => {
+    console.log(job.data);
+
+    if (job.data.jobType == 'GET_AUDIT_EVENTS') {
+      let auditEventsResults = await getAuditEvents();
+      return auditEventsResults
+    }
+  })
+
 }
 
 // Initialize the clustered worker process

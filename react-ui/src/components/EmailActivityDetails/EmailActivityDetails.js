@@ -4,7 +4,15 @@ import {
   DataTable,
   DataTableColumn,
   DataTableCell,
+  PageHeader,
+  Icon,
+  IconSettings,
+  Card,
+  MediaObject
 } from '@salesforce/design-system-react';
+import { clearEmailActivitySelected } from '../../stateManagement/actions';
+import toTitleCase from 'titlecase'
+import '../EmailActivityDetails/EmailActivityDetails.css'
 
 const mapStateToProps = (state) => {
   return {
@@ -21,50 +29,34 @@ class EmailActivityDetails extends Component {
 
   constructor(props) {
     super(props)
+    this.state = {
+      hasMore: true,
+      items: [],    // gets updated by handleChangingSelection()
+      columns: [],  // gets updated by handleChangingSelection()
+      label: '',
+
+    };
   }
-
-
-  state = {
-		hasMore: true,
-    items: []
-	};
 
   isLoading = false;
   page = 0;
 
 
+  componentDidMount() {
+    this.handleChangingSelection()
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    // if this.props.emailActivitySelected changes...
+    if (prevProps.emailActivitySelected !== this.props.emailActivitySelected) {
+      this.handleChangingSelection()
+    }
+  }
+
   handleChangingSelection = () => {
-
-  }
-
-  handleLoadMore = (emailActivityDetails) => {
-		if (!this.isLoading) {
-			setTimeout(() => {
-				const moreItems = emailActivityDetails.map((item) => {
-					const copy = { ...item };
-					copy.id += this.page.toString();
-					return copy;
-				});
-				this.page = this.page + 1;
-				const items = emailActivityDetails.slice().concat(moreItems) 
-
-				this.setState({ items, hasMore: this.page !== 10 }, () => {
-					this.isLoading = false;
-				});
-			}, 1000);
-		}
-		this.isLoading = true;
-	};
-
-
-
-  componentDidUpdate() {
-  }
-
-  render() {
     let emailActivityDetails = [];
     let columns;
-
+    
     switch(this.props.emailActivitySelected) {
       case 'sends':
         this.props.eventData.sendData.forEach(item => {
@@ -142,7 +134,8 @@ class EmailActivityDetails extends Component {
           <DataTableColumn key='batchId' label='Batch Id' property='batchId' />,
           <DataTableColumn key='smtpCode' label='SMTP Code' property='smtpCode' />,
           <DataTableColumn key='bounceCategory' label='Bounce Category' property='bounceCategory' />,
-          <DataTableColumn key='smtpReason' label='SMTP Reason' property='smtpReason' />
+          <DataTableColumn key='smtpReason' label='SMTP Reason' property='smtpReason'>
+          </DataTableColumn> 
         ]
 
         break;
@@ -170,6 +163,7 @@ class EmailActivityDetails extends Component {
         ]
 
         break;
+      
       case 'unsubscribes':
         this.props.eventData.unsubscribeData.forEach(item => {
           emailActivityDetails.push({
@@ -190,21 +184,42 @@ class EmailActivityDetails extends Component {
           <DataTableColumn key='eventType' label='Event Type' property='eventType' />,
           <DataTableColumn key='triggeredSendDefinitionObjectId' label='Triggered Send Definition Object Id' property='triggeredSendDefinitionObjectId' />
         ]
+      } 
 
-    }
-    
-    
+    this.setState({ items: emailActivityDetails, columns})
+  }
+
+  render() {
     return (
-      <div>
-        <DataTable 
-          items={emailActivityDetails}
-          onLoadMore={this.handleLoadMore(emailActivityDetails)}
-          fixedHeader
-          fixedLayout
-        >
-          {columns}
-        </DataTable>
+
+
+      <IconSettings iconPath='/icons/'>
+        <div className='slds-grid slds-grid_vertical'>
+          <Card
+            id='subscribersSummaryDetails_Card'
+            heading='Subscribers Summary'
+            header={
+              <MediaObject 
+                body={
+                  <div className='slds-grid slds-grid_align-spread'>
+                    <div className='slds-text-heading_small'>
+                      {toTitleCase(this.props.emailActivitySelected)}
+                    </div>
+                    <div class="slds-text-align_right">
+                      {`${this.state.items.length} items`}
+                    </div>
+                  </div>
+                }
+                verticalCenter
+              />
+            }
+          >
+          <DataTable items={this.state.items}>
+            {this.state.columns}
+          </DataTable>
+        </Card>
       </div>
+    </IconSettings>
     )
   }
 }

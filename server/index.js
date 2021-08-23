@@ -44,6 +44,9 @@ let journeyInventoryQueue = new Queue('journeyInventory', REDIS_URL);
 let businessUnitInfoQueue = new Queue('businessUnitInfo', REDIS_URL);
 let accountUserQueue = new Queue('accountUserInventory', REDIS_URL);
 let roleInventoryQueue = new Queue('roleInventory', REDIS_URL);
+let subscriberInventoryQueue = new Queue('subscriberInventory', REDIS_URL)
+let auditEventsQueue = new Queue('auditEvents', REDIS_URL)
+
 
 // Priority serve any static files
 app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
@@ -612,6 +615,88 @@ app.get('/api/getRoles/:id', async (req, res) => {
     res.status(400).send('You have either not included an id in your request');
   }
 });
+
+// Add getSubscribers() job
+app.post('/api/getSubscribers', async (req, res) => {
+  console.log('request sent for getSubscribers()');
+
+  try {
+    let job = await subscriberInventoryQueue.add({
+      jobType: 'GET_SUBSCRIBERS'
+    });
+
+    res.json({
+      id: job.id,
+      state: await job.getState()
+    });
+  } catch (e) {
+    res.json({
+      error: e
+    });
+  }
+})
+
+// Retrieve getSubscribers() job results
+app.get('/api/getSubscribers/:id', async (req, res) => {
+  let id = req.params.id;
+
+  if (id) {
+    let job = await subscriberInventoryQueue.getJob(id);
+
+    if (job === null) {
+      res.status(404).end();
+    } else {
+      let state = await job.getState();
+      let result = job.returnvalue;
+      let reason = job.failedReason;
+      res.json({ id, state, result, reason });
+    }
+  } else {
+    res.status(400).send('You have either not included an id in your request');
+  }
+})
+
+
+// Add getAuditEvents() job
+app.post('/api/getAuditEvents', async (req, res) => {
+  console.log('request sent for getAuditEvents()');
+
+  try {
+    let job = await auditEventsQueue.add({
+      jobType: 'GET_AUDIT_EVENTS'
+    });
+
+    res.json({
+      id: job.id,
+      state: await job.getState()
+    });
+  } catch (e) {
+    res.json({
+      error: e
+    });
+  }
+})
+
+
+// Retrieve getAuditEvents() job results
+app.get('/api/getAuditEvents/:id', async (req, res) => {
+  let id = req.params.id;
+
+  if (id) {
+    let job = await auditEventsQueue.getJob(id);
+
+    if (job === null) {
+      res.status(404).end();
+    } else {
+      let state = await job.getState();
+      let result = job.returnvalue;
+      let reason = job.failedReason;
+      res.json({ id, state, result, reason });
+    }
+  } else {
+    res.status(400).send('You have either not included an id in your request');
+  }
+})
 
 // All remaining requests return the React app, so it can handle routing
 app.get('*', (req, res) => {

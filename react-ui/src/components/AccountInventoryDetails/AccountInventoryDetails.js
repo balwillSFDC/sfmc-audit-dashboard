@@ -3,8 +3,13 @@ import { connect } from 'react-redux'
 import {
   DataTable,
   DataTableColumn,
-  DataTableCell
+  DataTableCell,
+  PageHeader,
+  IconSettings,
+  Card,
+  MediaObject
 } from '@salesforce/design-system-react';
+import toTitleCase from 'titlecase'
 
 const mapDispatchToProps = (dispatch) => {
   return {dispatch}
@@ -31,8 +36,27 @@ const mapStateToProps = (state) => {
 };
 
 class AccountInventoryDetails extends React.Component  {
-  render() {
+  constructor(props) {
+    super(props)
+    this.state = {
+      items: [],    // gets updated by handleChangingSelection()
+      columns: [],  // gets updated by handleChangingSelection()
+    }
+  }
 
+
+  componentDidMount() {
+    this.handleChangingSelection()
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    // if this.props.emailActivitySelected changes...
+    if (prevProps.accountInventorySelected !== this.props.accountInventorySelected) {
+      this.handleChangingSelection()
+    }
+  }
+
+  handleChangingSelection() {
     let selectedObjectDetailsList = [];
     let columns;
 
@@ -421,14 +445,39 @@ class AccountInventoryDetails extends React.Component  {
       default:
         selectedObjectDetailsList = <p>default</p>   
     }
-
-    return (
+    this.setState({ items: selectedObjectDetailsList, columns})
+  }
   
-      <div>
-        <DataTable items={selectedObjectDetailsList}>
-          {columns}
-        </DataTable>
-      </div>
+  render() {
+    return (
+      <IconSettings iconPath='/icons/'>
+          <div className='slds-grid slds-grid_vertical'>
+            <Card
+              id='subscribersSummaryDetails_Card'
+              heading='Subscribers Summary'
+              header={
+                <MediaObject 
+                  body={
+                    <div className='slds-grid slds-grid_align-spread'>
+                      <div className='slds-text-heading_small'>
+                        {toTitleCase(this.props.accountInventorySelected)}
+                      </div>
+                      <div class="slds-text-align_right">
+                        {`${this.state.items.length} items`}
+                      </div>
+                    </div>
+                  }
+                  verticalCenter
+                />
+              }
+            >
+            <DataTable items={this.state.items}>
+              {this.state.columns}
+            </DataTable>
+          </Card>
+        </div>
+      </IconSettings>
+
     )
   }
 }

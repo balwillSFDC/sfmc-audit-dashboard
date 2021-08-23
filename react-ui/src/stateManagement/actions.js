@@ -725,3 +725,147 @@ export const changeEmailActivitySelected = (emailActivitySelected) => {
     })
   }
 }
+
+export const clearEmailActivitySelected = () => {
+  return async (dispatch) => {
+    dispatch({
+      type: 'CLEAR_EMAIL_ACTIVITY_SELECTED',
+      payload: {
+        emailActivitySelected: ''
+      }
+    })
+  }
+}
+
+export const clearAccountInventorySelected = () => {
+  return async (dispatch) => {
+    dispatch({
+      type: 'CLEAR_ACCOUNT_INVENTORY_SELECTED',
+      payload: {
+        accountInventorySelected: ''
+      }
+    })
+  }
+}
+
+export const addSubscribersJob = () => {
+  return async (dispatch) => {
+    dispatch({
+      type: 'ADD_SUBSCRIBERS_JOB'
+    });
+
+    try {
+      let response = await axios.post('/api/getSubscribers');
+
+      dispatch({
+        type: 'ADD_SUBSCRIBERS_JOB_SUCCESS',
+        payload: {
+          subscribersJob: response.data.id,
+          subscribersJobState: response.data.state
+        }
+      });
+    } catch (e) {
+      dispatch({
+        type: 'ADD_SUBSCRIBERS_JOB_ERROR'
+      });
+    }
+  };
+}
+
+export const updateSubscribersJob = (id) => {
+  return async (dispatch) => {
+   dispatch({
+     type: 'UPDATE_SUBSCRIBERS'
+   });
+
+   try {
+     let response = await axios.get(`/api/getSubscribers/${id}`);
+
+     if (response.data.state === 'completed') {
+       dispatch({
+         type: 'UPDATE_SUBSCRIBERS_SUCCESS',
+         payload: {
+           subscribers: response.data.result,
+           subscribersJobState: response.data.state
+         }
+       });
+     }
+   } catch (e) {
+     dispatch({
+       type: 'UPDATE_SUBSCRIBERS_ERROR'
+     });
+   }
+ };
+};
+
+export const changeSubscribersSummarySelected = (subscribersSummarySelected) => {
+  return async (dispatch) => {
+    dispatch({
+      type: 'CHANGE_SUBSCRIBERS_SUMMARY_SELECTED',
+      payload: { 
+        subscribersSummarySelected: subscribersSummarySelected
+      }
+    })
+  }
+}
+
+export const clearSubscribersSummarySelected = () => {
+  return async (dispatch) => {
+    dispatch({
+      type: 'CLEAR_SUBSCRIBERS_SUMMARY_SELECTED',
+      payload: {
+        subscribersSummarySelected: ''
+      }
+    })
+  }
+}
+
+export const addAuditEventsJob = () => {
+  return async (dispatch) => {
+    dispatch({
+      type: 'ADD_AUDIT_EVENTS_JOB'
+    });
+
+    try {
+      let response = await axios.post('/api/getAuditEvents');
+
+      dispatch({
+        type: 'ADD_AUDIT_EVENTS_JOB_SUCCESS',
+        payload: {
+          auditEventsJob: response.data.id,
+          auditEventsJobState: response.data.state
+        }
+      });
+    } catch (e) {
+      dispatch({
+        type: 'ADD_AUDIT_EVENTS_JOB_ERROR'
+      });
+    }
+  };
+}
+
+export const updateAuditEventsJob = (id) => {
+  return async (dispatch) => {
+   dispatch({
+     type: 'UPDATE_AUDIT_EVENTS'
+   });
+
+   try {
+     let response = await axios.get(`/api/getAuditEvents/${id}`);
+
+     if (response.data.state === 'completed') {
+       dispatch({
+         type: 'UPDATE_AUDIT_EVENTS_SUCCESS',
+         payload: {
+           auditEvents: response.data.result,
+           auditEventsJobState: response.data.state
+         }
+       });
+     }
+   } catch (e) {
+     dispatch({
+       type: 'UPDATE_AUDIT_EVENTS_ERROR'
+     });
+   }
+ };
+};

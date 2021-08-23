@@ -3,7 +3,10 @@ import { connect } from 'react-redux';
 import {
   IconSettings,
   PageHeader,
-  Icon
+  Icon,
+  Card,
+  Button,
+  MediaObject
 } from '@salesforce/design-system-react';
 import './EmailActivity.css';
 import {
@@ -11,6 +14,7 @@ import {
   updateEventDataJob,
   changeEmailActivitySelected
 } from '../../stateManagement/actions';
+import EmailActivityTile from '../EmailActivityTile/EmailActivityTile';
 
 const mapStateToProps = (state) => {
   return {
@@ -25,129 +29,91 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 class emailActivity extends React.Component {
-  componentDidMount() {
-    this.props.dispatch(addEventDataJob());
+  constructor(props) {
+    super(props)
+    this.state = {
+    }
+  }
 
-    setInterval(() => {
-      if (this.props.eventDataJobState !== 'completed') {
-        this.props.dispatch(updateEventDataJob(this.props.eventDataJob));
-      } 
-    }, 2000);
+  componentDidMount() {
+    if (this.props.eventDataJobState !== 'completed') {
+      this.props.dispatch(addEventDataJob());
+
+      setInterval(() => {
+        if (this.props.eventDataJobState !== 'completed') {
+          this.props.dispatch(updateEventDataJob(this.props.eventDataJob));
+        } 
+      }, 2000);
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.eventDataJobState === 'completed' && this.props.eventDataJobState !== 'completed') {
+      setInterval(() => {
+        if (this.props.eventDataJobState !== 'completed') {
+          this.props.dispatch(updateEventDataJob(this.props.eventDataJob));
+        }
+      }, 2000);
+    }
+  }
+
+  handleRefresh = () => {
+    this.props.dispatch(addEventDataJob());
   }
 
   render() {
-
-    let sendData;
-    let openData;
-    let bounceData;
-    let clickData;
-    let unsubscribeData;
-
-    if (this.props.eventDataJobState === 'completed') {
-      sendData = (
-        <div className="slds-text-heading_medium slds-text-align_center">
-          {this.props.eventData.sendData.length}
+    let info;
+    
+    if (this.props.eventDataJobState !== 'completed') {
+      info = (
+        <div className="slds-text-color_weak">
+          Retrieving results...
         </div>
       )
-
-      openData = (
-        <div className="slds-text-heading_medium slds-text-align_center">
-          {this.props.eventData.openData.length}
-        </div>
-      )
-
-      bounceData = (
-        <div className="slds-text-heading_medium slds-text-align_center">
-          {this.props.eventData.bounceData.length}
-        </div>
-      )
-
-      clickData = (
-        <div className="slds-text-heading_medium slds-text-align_center">
-          {this.props.eventData.clickData.length}
-        </div>   
-      )
-
-      unsubscribeData = (
-        <div className="slds-text-heading_medium slds-text-align_center">
-          {this.props.eventData.unsubscribeData.length}
-        </div>
-      )
-
     } else {
-      sendData = '';
-      openData = '';
-      bounceData = '';
-      clickData = '';
-      unsubscribeData = '';
+      info = (
+        <div className="slds-text-color_success">
+          Finished - Results retrieved! 
+        </div>
+      )
     }
 
     return (
       <div id="EmailActivity-panel">
-        <IconSettings iconPage="/icons/">
-          <PageHeader
-            icon={<Icon category="standard" />}
-            title="Email Activity"
-            variant="object-home"
-            className="EmailActivityHeader"
-          />
-        </IconSettings>
-        <div className="slds-box slds-theme_default emailActivity-body">
-          <div className="slds-grid slds-gutter emailActivity-wrapper">
-            <div className="slds-col slds-p-horizontal_small emailActivity-card">
-              <div className="slds-box EmailActivityCard" onClick={() => {this.props.dispatch(changeEmailActivitySelected('sends'))}}>
-                <div className="slds-text-heading_small slds-text-align_center">
-                  <b>Sends</b>
-                </div>
-                
-                  <div className="slds-text-heading_medium slds-text-align_center">
-                    { sendData }
-                  </div>
 
+        <IconSettings iconPath='/icons/'>
+          <div className='slds-grid slds-grid_vertical'>
+            <Card
+              id='ExampleCard'
+              heading='Subscribers Summary'
+              headerActions={
+                <Button label="Refresh" onClick={this.handleRefresh} /> 
+              }
+              header={
+                <MediaObject 
+                  body={
+                    <>
+                      <div className='slds-text-heading_medium'>
+                        Email Activity
+                      </div>
+                      {info}
+                    </>
+                  }
+                  figure={<Icon category="standard" name='email' />}
+                  verticalCenter
+                />
+              }
+            >
+              <div className="slds-grid slds-gutter emailActivity-wrapper">
+                <EmailActivityTile emailActivity={'sends'} />
+                <EmailActivityTile emailActivity={'opens'} />
+                <EmailActivityTile emailActivity={'bounces'} />
+                <EmailActivityTile emailActivity={'clicks'} />
+                <EmailActivityTile emailActivity={'unsubscribes'} />
               </div>
-            </div>
-            <div className="slds-col slds-p-horizontal_small emailActivity-card">
-              <div className="slds-box EmailActivityCard" onClick={() => {this.props.dispatch(changeEmailActivitySelected('opens'))}}>
-                <div className="slds-text-heading_small slds-text-align_center">
-                  <b>Opens</b>
-                </div>
-                
-                { openData }
-      
-              </div>
-            </div>
-            <div className="slds-col slds-p-horizontal_small emailActivity-card">
-              <div className="slds-box EmailActivityCard" onClick={() => {this.props.dispatch(changeEmailActivitySelected('bounces'))}}>
-                <div className="slds-text-heading_small slds-text-align_center">
-                  <b>Bounces</b>
-                </div>
-                
-                { bounceData }
-                
-              </div>
-            </div>
-            <div className="slds-col slds-p-horizontal_small emailActivity-card">
-              <div className="slds-box EmailActivityCard" onClick={() => {this.props.dispatch(changeEmailActivitySelected('clicks'))}}>
-                <div className="slds-text-heading_small slds-text-align_center">
-                  <b>Clicks</b>
-                </div>
-
-                { clickData }
-                
-              </div>
-            </div>
-            <div className="slds-col slds-p-horizontal_small emailActivity-card">
-              <div className="slds-box EmailActivityCard" onClick={() => {this.props.dispatch(changeEmailActivitySelected('unsubscribes'))}}>
-                <div className="slds-text-heading_small slds-text-align_center">
-                  <b>Unsubscribes</b>
-                </div>
-                
-                { unsubscribeData }
-
-              </div>
-            </div>
+            </Card>
           </div>
-        </div>
+        </IconSettings>
       </div>
     );
   }

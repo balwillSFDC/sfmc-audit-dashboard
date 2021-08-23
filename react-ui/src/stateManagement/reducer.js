@@ -299,6 +299,67 @@ const reducer = (state = initialState, action) => {
         ...state,
         emailActivitySelected: action.payload.emailActivitySelected
       }
+    // Action delivers empty 'emailActivitySelected' prop
+    case 'CLEAR_EMAIL_ACTIVITY_SELECTED':
+      return {
+        ...state,
+        emailActivitySelected: action.payload.emailActivitySelected
+      }
+    case 'CLEAR_ACCOUNT_INVENTORY_SELECTED':
+      return {
+        ...state,
+        accountInventorySelected: action.payload.accountInventorySelected
+      }
+    case 'ADD_SUBSCRIBERS_JOB': 
+      return {
+        ...state
+      }
+    case 'ADD_SUBSCRIBERS_JOB_SUCCESS': 
+      return {
+        ...state,
+        subscribersJob: action.payload.subscribersJob,
+        subscribersJobState: action.payload.subscribersJobState
+      }
+    case 'UPDATE_SUBSCRIBERS':
+      return {
+        ...state
+      }
+    case 'UPDATE_SUBSCRIBERS_SUCCESS':
+      return {
+        ...state,
+        subscribers: action.payload.subscribers,
+        subscribersJobState: action.payload.subscribersJobState
+      }
+    case 'CHANGE_SUBSCRIBERS_SUMMARY_SELECTED':
+      return {
+        ...state,
+        subscribersSummarySelected: action.payload.subscribersSummarySelected
+      }
+    case 'CLEAR_SUBSCRIBERS_SUMMARY_SELECTED': 
+      return {
+        ...state,
+        subscribersSummarySelected: action.payload.subscribersSummarySelected
+      }
+    case 'ADD_AUDIT_EVENTS_JOB':
+      return {
+        ...state
+      }
+    case 'ADD_AUDIT_EVENTS_JOB_SUCCESS': 
+      return {
+        ...state,
+        auditEventsJob: action.payload.auditEventsJob,
+        auditEventsJobState: action.payload.auditEventsJobState
+      }
+    case 'UPDATE_AUDIT_EVENTS':
+      return {
+        ...state
+      }
+    case 'UPDATE_AUDIT_EVENTS_SUCCESS':
+      return {
+        ...state,
+        auditEvents: action.payload.auditEvents,
+        auditEventsJobState: action.payload.auditEventsJobState
+      }
     default:
       return state;
   }
