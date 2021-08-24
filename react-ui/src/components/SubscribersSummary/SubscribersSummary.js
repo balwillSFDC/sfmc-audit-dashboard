@@ -38,8 +38,11 @@ class SubscribersSummary extends Component {
     if (this.props.subscribersJobState !== 'completed') {
       this.props.dispatch(addSubscribersJob());
 
+      let counter = 0
+
       setInterval(() => {
-        if (this.props.subscribersJobState !== 'completed') {
+        if (this.props.subscribersJobState !== 'completed' && counter < 10) {
+          counter++
           this.props.dispatch(updateSubscribersJob(this.props.subscribersJob));
         } 
       }, 2000);

@@ -41,10 +41,16 @@ class AuditTrail extends Component {
     if (this.props.auditEventsJobState === '') {
       this.props.dispatch(addAuditEventsJob())
       
+
+
+      let counter = 0
+
       setInterval(() => {
-        if (this.props.auditEventsJobState !== 'completed') {
+        if ( this.props.auditEventsJobState !== 'completed' && counter < 10 ) {
+          counter++
           this.props.dispatch(updateAuditEventsJob(this.props.auditEventsJob));
-        } 
+        }
+         
       }, 2000);
     } else {
       this.handleUpdateToAuditEventsProps()

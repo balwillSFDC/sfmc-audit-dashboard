@@ -85,9 +85,7 @@ const mapStateToProps = (state) => {
     accountUsers: state.accountUsers,
     accountUsersJob: state.accountUsersJob,
     accountUsersJobState: state.accountUsersJobState,
-    roles: state.roles,
-    rolesJob: state.rolesJob,
-    rolesJobState: state.rolesJobState
+
   };
 };
 
@@ -134,8 +132,7 @@ class AccountInventory extends Component {
       this.props.automationsJobState === '' &&
       this.props.journeysJobState === '' && 
       this.props.businessUnitsJobState === '' &&
-      this.props.accountUsersJobState === '' &&
-      this.props.rolesJobState === ''
+      this.props.accountUsersJobState === '' 
     ) {
       this.props.dispatch(addEmailInventoryJob())
       this.props.dispatch(addTemplateInventoryJob())
@@ -149,61 +146,60 @@ class AccountInventory extends Component {
       this.props.dispatch(addJourneysJob())
       this.props.dispatch(addBusinessUnitsJob())
       this.props.dispatch(addAccountUsersJob())
-      this.props.dispatch(addRolesJob())
 
+      let counter = 0
       setInterval(() => {
-        if (this.props.emailInventoryJobState !== 'completed') {
-          this.props.dispatch(updateEmailInventoryJob(this.props.emailInventoryJob));
-        } 
+        if (counter < 10) {
+          counter++
 
-        if (this.props.templateInventoryJobState !== 'completed') {
-          this.props.dispatch(updateTemplateInventoryJob(this.props.templateInventoryJob));
-        }
-        
-        if (this.props.categoriesJobState !== 'completed') {
-          this.props.dispatch(updateCategoriesJob(this.props.categoriesJob));
-        }
-
-        if (this.props.triggeredSendsJobState !== 'completed') {
-          this.props.dispatch(updateTriggeredSendsJob(this.props.triggeredSendsJob));
-        }
-
-        if (this.props.cloudPagesJobState !== 'completed') {
-          this.props.dispatch(updateCloudPagesJob(this.props.cloudPagesJob));
-        }
-
-        if (this.props.dataExtensionsJobState !== 'completed') {
-          this.props.dispatch(updateDataExtensionsJob(this.props.dataExtensionsJob));
-        }
-
-        if (this.props.filterDataJobState !== 'completed') {
-          this.props.dispatch(updateFilterDataJob(this.props.filterDataJob));
-        }
-
-        if (this.props.queriesJobState !== 'completed') {
-          this.props.dispatch(updateQueriesJob(this.props.queriesJob));
-        }
-
-        if (this.props.automationsJobState !== 'completed') {
-          this.props.dispatch(updateAutomationsJob(this.props.automationsJob));
-        }
-
-        if (this.props.journeysJobState !== 'completed' ) {
-          this.props.dispatch(updateJourneysJob(this.props.journeysJob));
-        }
-
-        if (this.props.businessUnitsJobState !== 'completed') {
-          this.props.dispatch(updateBusinessUnitsJob(this.props.businessUnitsJob))
-        }
-
-        if (this.props.accountUsersJobState !== 'completed') {
-          this.props.dispatch(updateAccountUsersJob(this.props.accountUsersJob))
-        }
-
-        if (this.props.rolesJobState !== 'completed') {
-          this.props.dispatch(updateRolesJob(this.props.rolesJob))
-        }
-
+          if (this.props.emailInventoryJobState !== 'completed') {
+            this.props.dispatch(updateEmailInventoryJob(this.props.emailInventoryJob));
+          } 
+  
+          if (this.props.templateInventoryJobState !== 'completed') {
+            this.props.dispatch(updateTemplateInventoryJob(this.props.templateInventoryJob));
+          }
+          
+          if (this.props.categoriesJobState !== 'completed') {
+            this.props.dispatch(updateCategoriesJob(this.props.categoriesJob));
+          }
+  
+          if (this.props.triggeredSendsJobState !== 'completed') {
+            this.props.dispatch(updateTriggeredSendsJob(this.props.triggeredSendsJob));
+          }
+  
+          if (this.props.cloudPagesJobState !== 'completed') {
+            this.props.dispatch(updateCloudPagesJob(this.props.cloudPagesJob));
+          }
+  
+          if (this.props.dataExtensionsJobState !== 'completed') {
+            this.props.dispatch(updateDataExtensionsJob(this.props.dataExtensionsJob));
+          }
+  
+          if (this.props.filterDataJobState !== 'completed') {
+            this.props.dispatch(updateFilterDataJob(this.props.filterDataJob));
+          }
+  
+          if (this.props.queriesJobState !== 'completed') {
+            this.props.dispatch(updateQueriesJob(this.props.queriesJob));
+          }
+  
+          if (this.props.automationsJobState !== 'completed') {
+            this.props.dispatch(updateAutomationsJob(this.props.automationsJob));
+          }
+  
+          if (this.props.journeysJobState !== 'completed' ) {
+            this.props.dispatch(updateJourneysJob(this.props.journeysJob));
+          }
+  
+          if (this.props.businessUnitsJobState !== 'completed') {
+            this.props.dispatch(updateBusinessUnitsJob(this.props.businessUnitsJob))
+          }
+  
+          if (this.props.accountUsersJobState !== 'completed') {
+            this.props.dispatch(updateAccountUsersJob(this.props.accountUsersJob))
+          }
+        }    
       }, 2000 )
     }
   }  

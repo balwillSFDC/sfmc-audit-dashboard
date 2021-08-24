@@ -20,9 +20,14 @@ const {
   getAuditEvents
 } = require('./sfmcHelper.js');
 
+
 let REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
 
+
 let workers = process.env.WEB_CONCURRENCY || 2;
+const Redis = require('ioredis');
+const client = new Redis(REDIS_URL);
+const subscriber = new Redis(REDIS_URL);
 
 let maxJobsPerWorker = 50;
 
@@ -30,6 +35,7 @@ let maxJobsPerWorker = 50;
 const opts = {
   // redisOpts here will contain at least a property of connectionName which will identify the queue based on its name
   createClient: function (type, redisOpts) {
+    console.log(type)
     switch (type) {
       case 'client':
         return client;
@@ -213,6 +219,8 @@ function start() {
   })
 
 }
+
+
 
 // Initialize the clustered worker process
 // See: https://devcenter.heroku.com/articles/node-concurrency for more info

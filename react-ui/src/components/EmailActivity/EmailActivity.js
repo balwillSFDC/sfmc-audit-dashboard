@@ -39,10 +39,14 @@ class emailActivity extends React.Component {
     if (this.props.eventDataJobState !== 'completed') {
       this.props.dispatch(addEventDataJob());
 
+
+      let counter = 0
+
       setInterval(() => {
-        if (this.props.eventDataJobState !== 'completed') {
+        if (this.props.eventDataJobState !== 'completed' && counter < 10) {
+          counter++ 
           this.props.dispatch(updateEventDataJob(this.props.eventDataJob));
-        } 
+        }
       }, 2000);
     }
   }
