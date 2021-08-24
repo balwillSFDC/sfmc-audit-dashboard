@@ -26,29 +26,46 @@ let workers = process.env.WEB_CONCURRENCY || 2;
 
 let maxJobsPerWorker = 50;
 
+// taken from https://github.com/OptimalBits/bull/blob/develop/PATTERNS.md
+const opts = {
+  // redisOpts here will contain at least a property of connectionName which will identify the queue based on its name
+  createClient: function (type, redisOpts) {
+    switch (type) {
+      case 'client':
+        return client;
+      case 'subscriber':
+        return subscriber;
+      case 'bclient':
+        return new Redis(REDIS_URL, redisOpts);
+      default:
+        throw new Error('Unexpected connection type: ', type);
+    }
+  }
+}
+
 function start() {
-  let eventDataQueue = new Queue('eventData', REDIS_URL);
-  let emailInventoryQueue = new Queue('emailInventory', REDIS_URL);
-  let templateInventoryQueue = new Queue('templateInventory', REDIS_URL);
-  let categoryInventoryQueue = new Queue('categoryInventory', REDIS_URL);
+  let eventDataQueue = new Queue('eventData', opts);
+  let emailInventoryQueue = new Queue('emailInventory', opts);
+  let templateInventoryQueue = new Queue('templateInventory', opts);
+  let categoryInventoryQueue = new Queue('categoryInventory', opts);
   let triggeredSendInventoryQueue = new Queue(
     'triggeredSendInventory',
-    REDIS_URL
+    opts
   );
-  let cloudPageInventoryQueue = new Queue('cloudPageInventory', REDIS_URL);
+  let cloudPageInventoryQueue = new Queue('cloudPageInventory', opts);
   let dataExtensionInventoryQueue = new Queue(
     'dataExtensionInventory',
-    REDIS_URL
+    opts
   );
-  let filterInventoryQueue = new Queue('filterInventory', REDIS_URL);
-  let queryInventoryQueue = new Queue('queryInventory', REDIS_URL);
-  let automationInventoryQueue = new Queue('automationInventory', REDIS_URL);
-  let journeyInventoryQueue = new Queue('journeyInventory', REDIS_URL);
-  let businessUnitInfoQueue = new Queue('businessUnitInfo', REDIS_URL);
-  let accountUserQueue = new Queue('accountUserInventory', REDIS_URL);
-  let roleInventoryQueue = new Queue('roleInventory', REDIS_URL);
-  let subscriberInventoryQueue = new Queue('subscriberInventory', REDIS_URL)
-  let auditEventsQueue = new Queue('auditEvents', REDIS_URL)
+  let filterInventoryQueue = new Queue('filterInventory', opts);
+  let queryInventoryQueue = new Queue('queryInventory', opts);
+  let automationInventoryQueue = new Queue('automationInventory', opts);
+  let journeyInventoryQueue = new Queue('journeyInventory', opts);
+  let businessUnitInfoQueue = new Queue('businessUnitInfo', opts);
+  let accountUserQueue = new Queue('accountUserInventory', opts);
+  let roleInventoryQueue = new Queue('roleInventory', opts);
+  let subscriberInventoryQueue = new Queue('subscriberInventory', opts)
+  let auditEventsQueue = new Queue('auditEvents', opts)
   
 
   eventDataQueue.process(maxJobsPerWorker, async (job) => {
