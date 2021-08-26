@@ -4,6 +4,7 @@
   "description": "A template for react-redux projects",
   "main": "index.js",
   "dependencies": {
+    "@bull-board/express": "^3.5.2",
     "axios": "^0.21.1",
     "bull": "^3.22.6",
     "dotenv": "^8.2.0",

@@ -15,10 +15,10 @@ const {
   getJourneys,
   getBusinessUnits,
   getAccountUsers,
-  getRoles,
   getSubscribersSummary,
   getAuditEvents
 } = require('./sfmcHelper.js');
+
 
 
 let REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
@@ -36,6 +36,7 @@ const opts = {
   // redisOpts here will contain at least a property of connectionName which will identify the queue based on its name
   createClient: function (type, redisOpts) {
     console.log(type)
+    console.log(redisOpts)
     switch (type) {
       case 'client':
         return client;
@@ -51,28 +52,28 @@ const opts = {
 
 function start() {
   let eventDataQueue = new Queue('eventData', opts);
-  let emailInventoryQueue = new Queue('emailInventory', opts);
-  let templateInventoryQueue = new Queue('templateInventory', opts);
-  let categoryInventoryQueue = new Queue('categoryInventory', opts);
-  let triggeredSendInventoryQueue = new Queue(
-    'triggeredSendInventory',
-    opts
-  );
-  let cloudPageInventoryQueue = new Queue('cloudPageInventory', opts);
-  let dataExtensionInventoryQueue = new Queue(
-    'dataExtensionInventory',
-    opts
-  );
-  let filterInventoryQueue = new Queue('filterInventory', opts);
-  let queryInventoryQueue = new Queue('queryInventory', opts);
-  let automationInventoryQueue = new Queue('automationInventory', opts);
-  let journeyInventoryQueue = new Queue('journeyInventory', opts);
-  let businessUnitInfoQueue = new Queue('businessUnitInfo', opts);
-  let accountUserQueue = new Queue('accountUserInventory', opts);
-  let roleInventoryQueue = new Queue('roleInventory', opts);
+  let accountIventoryQueue = new Queue('accountInventory',)
   let subscriberInventoryQueue = new Queue('subscriberInventory', opts)
   let auditEventsQueue = new Queue('auditEvents', opts)
-  
+
+  // let emailInventoryQueue = new Queue('emailInventory', opts);
+  // let templateInventoryQueue = new Queue('templateInventory', opts);
+  // let categoryInventoryQueue = new Queue('categoryInventory', opts);
+  // let triggeredSendInventoryQueue = new Queue(
+  //   'triggeredSendInventory',
+  //   opts
+  // );
+  // let cloudPageInventoryQueue = new Queue('cloudPageInventory', opts);
+  // let dataExtensionInventoryQueue = new Queue(
+  //   'dataExtensionInventory',
+  //   opts
+  // );
+  // let filterInventoryQueue = new Queue('filterInventory', opts);
+  // let queryInventoryQueue = new Queue('queryInventory', opts);
+  // let automationInventoryQueue = new Queue('automationInventory', opts);
+  // let journeyInventoryQueue = new Queue('journeyInventory', opts);
+  // let businessUnitInfoQueue = new Queue('businessUnitInfo', opts);
+  // let accountUserQueue = new Queue('accountUserInventory', opts);
 
   eventDataQueue.process(maxJobsPerWorker, async (job) => {
     console.log(job.data);
@@ -80,123 +81,6 @@ function start() {
     if (job.data.jobType == 'GET_ALL_EVENT_DATA') {
       let eventDataResult = await getAllEventData();
       return eventDataResult;
-    }
-  });
-
-  emailInventoryQueue.process(maxJobsPerWorker, async (job) => {
-    console.log(job.data);
-
-    if (job.data.jobType == 'GET_EMAIL_INVENTORY') {
-      let emailInventoryResult = await getEmailInventory();
-      return emailInventoryResult;
-    }
-  });
-
-  templateInventoryQueue.process(maxJobsPerWorker, async (job) => {
-    console.log(job.data);
-
-    if (job.data.jobType == 'GET_TEMPLATE_INVENTORY') {
-      let templateInventoryResult = await getTemplateInventory();
-      return templateInventoryResult;
-    }
-  });
-
-  categoryInventoryQueue.process(maxJobsPerWorker, async (job) => {
-    console.log(job.data);
-
-    if (job.data.jobType == 'GET_CATEGORIES') {
-      let categoriesResult = await getCategories();
-      return categoriesResult;
-    }
-  });
-
-  triggeredSendInventoryQueue.process(maxJobsPerWorker, async (job) => {
-    console.log(job.data);
-
-    if (job.data.jobType == 'GET_TRIGGERED_SENDS') {
-      let triggeredSendsResult = await getTriggeredSends();
-      return triggeredSendsResult;
-    }
-  });
-
-  cloudPageInventoryQueue.process(maxJobsPerWorker, async (job) => {
-    console.log(job.data);
-
-    if (job.data.jobType == 'GET_CLOUD_PAGES') {
-      let cloudPagesResult = await getCloudPages();
-      return cloudPagesResult;
-    }
-  });
-
-  dataExtensionInventoryQueue.process(maxJobsPerWorker, async (job) => {
-    console.log(job.data);
-
-    if (job.data.jobType == 'GET_ALL_DATA_EXTENSIONS') {
-      let dataExtensionsResult = await getAllDataExtensions();
-      return dataExtensionsResult;
-    }
-  });
-
-  filterInventoryQueue.process(maxJobsPerWorker, async (job) => {
-    console.log(job.data);
-
-    if (job.data.jobType == 'GET_FILTER_DATA') {
-      let filterDataResult = await getFilterData();
-      return filterDataResult;
-    }
-  });
-
-  queryInventoryQueue.process(maxJobsPerWorker, async (job) => {
-    console.log(job.data);
-
-    if (job.data.jobType == 'GET_QUERIES') {
-      let queriesResult = await getQueries();
-      return queriesResult;
-    }
-  });
-
-  automationInventoryQueue.process(maxJobsPerWorker, async (job) => {
-    console.log(job.data);
-
-    if (job.data.jobType == 'GET_AUTOMATIONS') {
-      let automationsResult = await getAutomations();
-      return automationsResult;
-    }
-  });
-
-  journeyInventoryQueue.process(maxJobsPerWorker, async (job) => {
-    console.log(job.data);
-
-    if (job.data.jobType == 'GET_JOURNEYS') {
-      let journeysResult = await getJourneys();
-      return journeysResult;
-    }
-  });
-
-  businessUnitInfoQueue.process(maxJobsPerWorker, async (job) => {
-    console.log(job.data);
-
-    if (job.data.jobType == 'GET_BUSINESS_UNIT') {
-      let businessUnitResult = await getBusinessUnits();
-      return businessUnitResult;
-    }
-  });
-
-  accountUserQueue.process(maxJobsPerWorker, async (job) => {
-    console.log(job.data);
-
-    if (job.data.jobType == 'GET_ACCOUNT_USERS') {
-      let accountUsersResult = await getAccountUsers();
-      return accountUsersResult;
-    }
-  });
-
-  roleInventoryQueue.process(maxJobsPerWorker, async (job) => {
-    console.log(job.data);
-
-    if (job.data.jobType == 'GET_ROLES') {
-      let rolesResult = await getRoles();
-      return rolesResult;
     }
   });
 
@@ -218,8 +102,71 @@ function start() {
     }
   })
 
-}
+  accountIventoryQueue.process(maxJobsPerWorker, async (job) => {
+    console.log(job.data);
 
+    if (job.data.jobType == 'GET_EMAIL_INVENTORY') {
+      let emailInventoryResult = await getEmailInventory();
+      return emailInventoryResult;
+    }
+
+    if (job.data.jobType == 'GET_TEMPLATE_INVENTORY') {
+      let templateInventoryResult = await getTemplateInventory();
+      return templateInventoryResult;
+    }
+
+
+    if (job.data.jobType == 'GET_CATEGORIES') {
+      let categoriesResult = await getCategories();
+      return categoriesResult;
+    }
+
+    if (job.data.jobType == 'GET_TRIGGERED_SENDS') {
+      let triggeredSendsResult = await getTriggeredSends();
+      return triggeredSendsResult;
+    }
+
+    if (job.data.jobType == 'GET_CLOUD_PAGES') {
+      let cloudPagesResult = await getCloudPages();
+      return cloudPagesResult;
+    }
+
+    if (job.data.jobType == 'GET_ALL_DATA_EXTENSIONS') {
+      let dataExtensionsResult = await getAllDataExtensions();
+      return dataExtensionsResult;
+    }
+
+    if (job.data.jobType == 'GET_FILTER_DATA') {
+      let filterDataResult = await getFilterData();
+      return filterDataResult;
+    }
+
+    if (job.data.jobType == 'GET_QUERIES') {
+      let queriesResult = await getQueries();
+      return queriesResult;
+    }
+
+    if (job.data.jobType == 'GET_AUTOMATIONS') {
+      let automationsResult = await getAutomations();
+      return automationsResult;
+    }
+
+    if (job.data.jobType == 'GET_JOURNEYS') {
+      let journeysResult = await getJourneys();
+      return journeysResult;
+    }
+
+    if (job.data.jobType == 'GET_BUSINESS_UNIT') {
+      let businessUnitResult = await getBusinessUnits();
+      return businessUnitResult;
+    }
+
+    if (job.data.jobType == 'GET_ACCOUNT_USERS') {
+      let accountUsersResult = await getAccountUsers();
+      return accountUsersResult;
+    }
+  })
+}
 
 
 // Initialize the clustered worker process
