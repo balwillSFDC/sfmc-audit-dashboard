@@ -35,8 +35,7 @@ let maxJobsPerWorker = 50;
 const opts = {
   // redisOpts here will contain at least a property of connectionName which will identify the queue based on its name
   createClient: function (type, redisOpts) {
-    console.log(type)
-    console.log(redisOpts)
+
     switch (type) {
       case 'client':
         return client;
@@ -52,7 +51,7 @@ const opts = {
 
 function start() {
   let eventDataQueue = new Queue('eventData', opts);
-  let accountIventoryQueue = new Queue('accountInventory',)
+  let accountInventoryQueue = new Queue('accountInventory', opts)
   let subscriberInventoryQueue = new Queue('subscriberInventory', opts)
   let auditEventsQueue = new Queue('auditEvents', opts)
 
@@ -102,7 +101,7 @@ function start() {
     }
   })
 
-  accountIventoryQueue.process(maxJobsPerWorker, async (job) => {
+  accountInventoryQueue.process(maxJobsPerWorker, async (job) => {
     console.log(job.data);
 
     if (job.data.jobType == 'GET_EMAIL_INVENTORY') {
