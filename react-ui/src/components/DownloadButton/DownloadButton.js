@@ -622,10 +622,11 @@ class DownloadButton extends Component {
         <Button 
           onClick={() => this.exportToExcel()} 
           iconPosition='left' 
-          label='Download Data'
+          label={this.state.buttonState !== 'Ready' ? 'Download Pending...' : 'Download Data' }
           iconCategory='utility'
           iconName='download'  
-          variant='brand'
+          variant='brand' 
+          disabled={this.state.buttonState !== 'Ready' ? true : false}
         /> 
       </IconSettings>
       </div>
