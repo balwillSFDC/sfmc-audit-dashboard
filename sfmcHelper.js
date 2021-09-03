@@ -561,7 +561,8 @@ function getAccountUsers() {
     'AccountUser.CustomerKey',
     'AccountUser.SalesForceID',
     'AccountUser.DefaultBusinessUnit',
-    'AccountUser.Client.ModifiedBy'
+    'AccountUser.Client.ModifiedBy',
+    'LastSuccessfulLogin'
   ];
 
   let filter = {
@@ -581,6 +582,10 @@ function getAccountUsers() {
 
   return accountUsers;
 }
+
+
+
+getAccountUsers().then(console.log)
 
 function getRoles() {
   let props = [

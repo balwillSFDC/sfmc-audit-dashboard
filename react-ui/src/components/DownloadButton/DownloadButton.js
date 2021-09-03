@@ -511,7 +511,8 @@ class DownloadButton extends Component {
               notificationEmailAddress: item.NotificationEmailAddress,
               defaultBusinessUnit: item.DefaultBusinessUnit,
               salesforceId: item.SalesForceID,
-              isSendable: item.IsSendable
+              isSendable: item.IsSendable,
+              lastLogin: item.LastSuccessfulLogin
             })
           })
       

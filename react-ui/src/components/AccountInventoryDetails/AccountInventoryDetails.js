@@ -243,7 +243,7 @@ class AccountInventoryDetails extends React.Component  {
             resetRetentionPeriodOnImport: item.ResetRetentionPeriodOnImport,
             deleteAtEndOfRetentionPeriod: item.DeleteAtEndOfRetentionPeriod,
             retainUntil: item.RetainUntil,
-            status: item.Status
+            status: item.Status,
           })
         });
         
@@ -419,6 +419,7 @@ class AccountInventoryDetails extends React.Component  {
           <DataTableColumn key='defaultBusinessUnit' label='Default Business Unit' property='defaultBusinessUnit' />,  
           <DataTableColumn key='salesforceId' label='Salesforce Id' property='salesforceId' />,  
           <DataTableColumn key='isSendable' label='Is Sendable?' property='isSendable' />,  
+          <DataTableColumn key='LastLogin' label='Last Login' property='lastLogin' />,  
         ]
                 
 
@@ -436,7 +437,9 @@ class AccountInventoryDetails extends React.Component  {
             notificationEmailAddress: item.NotificationEmailAddress,
             defaultBusinessUnit: item.DefaultBusinessUnit,
             salesforceId: item.SalesForceID,
-            isSendable: item.IsSendable
+            isSendable: item.IsSendable,
+            lastLogin: item.LastSuccessfulLogin
+
           })
         })
 
