@@ -4,6 +4,7 @@ const customMiddleWare = (store) => (next) => (action) => {
   // Custom Middleware
   // ...
 
+
   return next(action);
 };
 
@@ -359,6 +360,36 @@ const reducer = (state = initialState, action) => {
         ...state,
         auditEvents: action.payload.auditEvents,
         auditEventsJobState: action.payload.auditEventsJobState
+      }
+    case 'ADD_JOURNEY_AUDIT_LOG_JOB':
+      return {
+        ...state
+      }
+    case 'ADD_JOURNEY_AUDIT_LOG_JOB_SUCCESS':
+      return {
+        ...state,
+        journeyAuditLogJob: action.payload.journeyAuditLogJob,
+        journeyAuditLogJobState: action.payload.journeyAuditLogJobState
+      }
+    case 'UPDATE_JOURNEY_AUDIT_LOG':
+      return {
+        ...state
+      }
+    case 'UPDATE_JOURNEY_AUDIT_LOG_SUCCESS':
+      return {
+        ...state,
+        journeyAuditLog: action.payload.journeyAuditLog,
+        journeyAuditLogJobState: action.payload.journeyAuditLogJobState
+      }
+    case 'TOGGLE_JOURNEY_DETAIL_MODAL':
+      return {
+        ...state,
+        isOpenJourneyDetailModal: action.payload.isOpenJourneyDetailModal
+      }
+    case 'CHANGE_JOURNEY_DETAIL_SELECTED':
+      return {
+        ...state,
+        journeyDetailSelected: action.payload.journeyDetailSelected
       }
     default:
       return state;

@@ -742,6 +742,51 @@ app.get('/api/getAuditEvents/:id', async (req, res) => {
   }
 })
 
+// Add getJourneyAuditLog() job
+app.post('/api/getJourneyAuditLog', async (req, res) => {
+  let journeyId = req.body.journeyId
+
+  try {
+    let job = await auditEventsQueue.add({
+      jobType: 'GET_JOURNEY_AUDIT_LOG',
+      journeyId: journeyId
+    });
+
+    res.json({
+      id: job.id,
+      state: await job.getState()
+    });
+  } catch (e) {
+    res.json({
+      error: e
+    });
+  }
+})
+
+
+// Retrieve getJourneyAuditLog() job results
+app.get('/api/getJourneyAuditLog/:id', async (req, res) => {
+  let id = req.params.id;
+
+  if (id) {
+    let job = await auditEventsQueue.getJob(id);
+
+    if (job === null) {
+      res.status(404).end();
+    } else {
+      let state = await job.getState();
+      let result = job.returnvalue;
+      let reason = job.failedReason;
+      res.json({ id, state, result, reason });
+    }
+  } else {
+    res.status(400).send('You have either not included an id in your request');
+  }
+})
+
+
+
+
 // All remaining requests return the React app, so it can handle routing
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));

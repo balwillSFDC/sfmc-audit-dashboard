@@ -9,9 +9,9 @@ The SFMC Audit dashboard gives Admins a 360 view 🌎 of their Account in an ins
 - ✔ Account details
 - ✔ Email Activity Summary
 - ✔ Downloadable Excel files
+- ✔ Searchable Subscriber
 - ⌛ Automation Runs Analysis (+charts)
 - ⌛ Email Trend Analysis (+charts)
-- ⌛ Searchable Subscriber
 - ⌛ Additional Journey Analysis
 
 ## Installing the App

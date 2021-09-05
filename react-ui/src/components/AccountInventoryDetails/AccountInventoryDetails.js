@@ -10,6 +10,13 @@ import {
   MediaObject
 } from '@salesforce/design-system-react';
 import toTitleCase from 'titlecase'
+import JourneyDetailModal from '../JourneyDetailModal/JourneyDetailModal';
+import { 
+  toggleJourneyDetailModal, 
+  addGetJourneyAuditLogJob,
+  changeJourneyDetailSelected
+} from '../../stateManagement/actions';
+import { store } from '../../stateManagement/store';
 
 const mapDispatchToProps = (dispatch) => {
   return {dispatch}
@@ -31,9 +38,34 @@ const mapStateToProps = (state) => {
     automations: state.automations,
     journeys: state.journeys,
     businessUnits: state.businessUnits,
-    accountUsers: state.accountUsers
+    accountUsers: state.accountUsers,
+    isOpenJourneyDetailModal: state.isOpenJourneyDetailModal
   };
 };
+
+const WrappedDataTableCell = ({ children, ...props }) => (
+  <DataTableCell {...props} >
+    <td class="slds-cell-wrap" >{children}</td>
+  </DataTableCell>
+);
+
+WrappedDataTableCell.displayName = DataTableCell.displayName;
+
+const handleJourneyDetailModalOpen = (e) => {
+  let state = store.getState()
+  store.dispatch(changeJourneyDetailSelected(e.target.innerText))
+  store.dispatch(toggleJourneyDetailModal(!state.isOpenJourneyDetailModal))
+}
+
+
+const JourneyDetailCell = ({ children, ...props }) => (
+  <DataTableCell {...props} >
+    <a onClick={handleJourneyDetailModalOpen}>{children}</a>
+  </DataTableCell>
+);
+
+JourneyDetailCell.displayName = DataTableCell.displayName;
+
 
 class AccountInventoryDetails extends React.Component  {
   constructor(props) {
@@ -323,14 +355,16 @@ class AccountInventoryDetails extends React.Component  {
       case 'Journeys':   
 
         columns = [
-          <DataTableColumn key='name' label='Name' property='name' />,
+          <DataTableColumn key='name' label='Name' property='name'>
+            <JourneyDetailCell /> 
+          </DataTableColumn>,
+          <DataTableColumn key='id' label='Id' property='id' />,
           <DataTableColumn key='key' label='Key' property='key' />,
           <DataTableColumn key='createdDate' label='Created Date' property='createdDate' />,
           <DataTableColumn key='version' label='Version' property='version' />,
           <DataTableColumn key='entryMode' label='Entry Mode' property='entryMode' />,
           <DataTableColumn key='definitionType' label='Definition Type' property='definitionType' />,
           <DataTableColumn key='categoryId' label='Category Id' property='categoryId' />,
-
           <DataTableColumn key='currentPopulation' label='Current Population' property='currentPopulation' />,
           <DataTableColumn key='cumulativePopulation' label='Cumulative Population' property='cumulativePopulation' />,
           <DataTableColumn key='metGoal' label='Met Goal' property='metGoal' />,
@@ -342,6 +376,7 @@ class AccountInventoryDetails extends React.Component  {
         this.props.journeys.items.forEach(item => {
           selectedObjectDetailsList.push({
             name: item.name,
+            id: item.id,
             key: item.key,
             createdDate: item.createdDate,
             version: item.version,

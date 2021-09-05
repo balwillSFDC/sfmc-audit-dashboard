@@ -64,7 +64,9 @@ const initialState = {
   auditEventsJobState: '',
   accountInventorySelected: '',
   emailActivitySelected: '',
-  subscribersSummarySelected: ''
+  subscribersSummarySelected: '',
+  isOpenJourneyDetailModal: false,
+  journeyDetailSelected: '',
   // ...
 };
 

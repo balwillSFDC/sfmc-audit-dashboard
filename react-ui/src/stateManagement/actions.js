@@ -869,3 +869,75 @@ export const updateAuditEventsJob = (id) => {
    }
  };
 };
+
+export const addGetJourneyAuditLogJob = (journeyId) => {
+  return async (dispatch) => {
+    dispatch({
+      type: 'ADD_JOURNEY_AUDIT_LOG_JOB'
+    });
+
+    try {
+      let response = await axios.post(`/api/getJourneyAuditLogJob`, { journeyId });
+
+      dispatch({
+        type: 'ADD_JOURNEY_AUDIT_LOG_JOB_SUCCESS',
+        payload: {
+          journeyAuditLogJob: response.data.id,
+          journeyAuditLogJobState: response.data.state
+        }
+      });
+    } catch (e) {
+      dispatch({
+        type: 'ADD_JOURNEY_AUDIT_LOG_JOB_ERROR'
+      });
+    }
+  };
+}
+
+export const updateJourneyAuditLog = (id) => {
+  return async (dispatch) => {
+   dispatch({
+     type: 'UPDATE_JOURNEY_AUDIT_LOG'
+   });
+
+   try {
+     let response = await axios.get(`/api/getAuditEvents/${id}`);
+
+     if (response.data.state === 'completed') {
+       dispatch({
+         type: 'UPDATE_JOURNEY_AUDIT_LOG_SUCCESS',
+         payload: {
+           journeyAuditLog: response.data.result,
+           journeyAuditLogJobState: response.data.state
+         }
+       });
+     }
+   } catch (e) {
+     dispatch({
+       type: 'UPDATE_JOURNEY_AUDIT_LOG_ERROR'
+     });
+   }
+ };
+};
+
+export const toggleJourneyDetailModal = (isOpenJourneyDetailModal) => {
+  return async (dispatch) => {
+    dispatch({
+      type: 'TOGGLE_JOURNEY_DETAIL_MODAL',
+      payload: {
+        isOpenJourneyDetailModal: isOpenJourneyDetailModal
+      }
+    })
+  }
+}
+
+export const changeJourneyDetailSelected = (journeyDetailSelected) => {
+  return async (dispatch) => {
+    dispatch({
+      type: 'CHANGE_JOURNEY_DETAIL_SELECTED',
+      payload: { 
+        journeyDetailSelected: journeyDetailSelected
+      }
+    })
+  }
+}

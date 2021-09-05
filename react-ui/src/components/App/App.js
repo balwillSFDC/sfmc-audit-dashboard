@@ -13,12 +13,15 @@ import SubscribersSummaryDetails from '../SubscribersSummaryDetails/SubscribersS
 import AuditTrail from '../AuditTrail/AuditTrail';
 import DownloadDataPage from '../DownloadDataPage/DownloadDataPage';
 import About from '../About/About';
+import JourneyDetailModal from '../JourneyDetailModal/JourneyDetailModal';
+
 
 const mapStateToProps = (state) => {
   return {
     accountInventorySelected: state.accountInventorySelected,
     emailActivitySelected: state.emailActivitySelected,
     subscribersSummarySelected: state.subscribersSummarySelected,
+    isOpenJourneyDetailModal: state.isOpenJourneyDetailModal
     // ...
   };
 };
@@ -56,6 +59,7 @@ class App extends React.Component {
 
               <AccountInventory />
               { this.props.accountInventorySelected && <AccountInventoryDetails />  }
+              { this.props.isOpenJourneyDetailModal && <JourneyDetailModal /> }
             </Route>
 
             <Route exact path='/auditTrail'>

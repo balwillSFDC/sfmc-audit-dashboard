@@ -27,6 +27,16 @@ const mapDispatchToProps = (dispatch) => {
   return { dispatch };
 };
 
+
+const WrappedDataTableCell = ({ children, ...props }) => (
+  <DataTableCell {...props} >
+    <td class="slds-cell-wrap" >{children}</td>
+  </DataTableCell>
+);
+
+WrappedDataTableCell.displayName = DataTableCell.displayName;
+
+
 class EmailActivityDetails extends Component {
 
   constructor(props) {
@@ -137,6 +147,7 @@ class EmailActivityDetails extends Component {
           <DataTableColumn key='smtpCode' label='SMTP Code' property='smtpCode' />,
           <DataTableColumn key='bounceCategory' label='Bounce Category' property='bounceCategory' />,
           <DataTableColumn key='smtpReason' label='SMTP Reason' property='smtpReason'>
+            <WrappedDataTableCell /> 
           </DataTableColumn> 
         ]
 
@@ -268,7 +279,10 @@ class EmailActivityDetails extends Component {
                 ) : null
             }
           >
-          <DataTable items={this.state.items}>
+          <DataTable 
+            items={this.state.items}
+
+          >
             {this.state.columns}
           </DataTable>
         </Card>

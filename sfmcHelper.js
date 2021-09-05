@@ -170,47 +170,137 @@ async function getAccessToken() {
   return accessToken;
 }
 
-async function getEmailInventory() {
+
+async function getHtmlEmails() {
   let accessToken = await getAccessToken();
+  let page = 0
+  let pageSize = 10000
+  let moreItems = true
+  let count = 0
+  let items = []
+
+  while (moreItems) {
+    page++
+    
+    // Get Html Email Inventory
+    let htmlEmailRequestConfig = {
+      method: 'get',
+      url: `${origin}asset/v1/content/assets/?$page=${page}&$pagesize=${pageSize}&$filter=assetType.name=htmlemail&$fields=id,customerkey,assettype,name,owner,data,status`,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      }
+    };
+
+    let htmlEmailResponse = await axios(htmlEmailRequestConfig);
+    let htmlEmailData = htmlEmailResponse.data;
+    count += htmlEmailData.count
+    htmlEmailData.items.forEach((item) => items.push(item))
+
+    moreItems = (htmlEmailData.count === 0 || htmlEmailData.count - pageSize < 0) ? false : true
+
+  }
+
+  return {
+    count,
+    page,
+    pageSize,
+    items
+  }
+}
+
+async function getTemplateEmails() {
+  let accessToken = await getAccessToken();
+  let page = 0
+  let pageSize = 10000
+  let moreItems = true
+  let count = 0
+  let items = []
+
+  while (moreItems) {
+    page++
+    
+    // Get Html Email Inventory
+    let templateEmailRequestConfig = {
+      method: 'get',
+      url: `${origin}asset/v1/content/assets/?$page=${page}&$pagesize=${pageSize}&$filter=assetType.name=templatebasedemail&$fields=id, customerkey,assettype,name,owner,data,status`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`
+      }
+    };
+  
+    let templateEmailResponse = await axios(templateEmailRequestConfig);
+    let templateEmailData = templateEmailResponse.data;
+    count += templateEmailData.count
+    templateEmailData.items.forEach((item) => items.push(item))
+
+    moreItems = (templateEmailData.count === 0 || templateEmailData.count - pageSize < 0) ? false : true
+
+  }
+
+  return {
+    count,
+    page,
+    pageSize,
+    items
+  }
+}
+
+async function getTextOnlyEmails() {
+  let accessToken = await getAccessToken();
+  let page = 0
+  let pageSize = 10000
+  let moreItems = true
+  let count = 0
+  let items = []
+
+  while (moreItems) {
+    page++
+    
+    // Get Html Email Inventory
+    let textOnlyEmailRequestConfig = {
+      method: 'get',
+      url: `${origin}asset/v1/content/assets/?$page=${page}&$pagesize=${pageSize}&$filter=assetType.name=textonlyemail&$fields=id, customerkey,assettype,name,owner,data,status`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`
+      }
+    };
+  
+    let textOnlyEmailResponse = await axios(textOnlyEmailRequestConfig);
+    let textOnlyEmailData = textOnlyEmailResponse.data;
+    count += textOnlyEmailData.count
+    textOnlyEmailData.items.forEach((item) => items.push(item))
+
+    moreItems = (textOnlyEmailData.count === 0 || textOnlyEmailData.count - pageSize < 0) ? false : true
+
+  }
+
+  return {
+    count,
+    page,
+    pageSize,
+    items
+  }
+}
+
+async function getEmailInventory() {
 
   // Get Html Email Inventory
-  let htmlEmailRequestConfig = {
-    method: 'get',
-    url: `${origin}asset/v1/content/assets/?$page=1&$pagesize=10000&$filter=assetType.name=htmlemail&$fields=id,customerkey,assettype,name,owner,data,status`,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`
-    }
-  };
-
-  let htmlEmailResponse = await axios(htmlEmailRequestConfig);
-  let htmlEmailData = htmlEmailResponse.data;
+  let htmlEmailData = await getHtmlEmails()
 
   // Get Template Based Email Inventory
-  let templateEmailRequestConfig = {
-    method: 'get',
-    url: `${origin}asset/v1/content/assets/?$page=1&$pagesize=10000&$filter=assetType.name=templatebasedemail&$fields=id, customerkey,assettype,name,owner,data,status`,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`
-    }
-  };
-
-  let templateEmailResponse = await axios(templateEmailRequestConfig);
-  let templateEmailData = templateEmailResponse.data;
+  let templateEmailData = await getTemplateEmails()
 
   // Get Text Only Email Inventory
-  let textOnlyEmailRequestConfig = {
-    method: 'get',
-    url: `${origin}asset/v1/content/assets/?$page=1&$pagesize=10000&$filter=assetType.name=textonlyemail&$fields=id, customerkey,assettype,name,owner,data,status`,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`
-    }
-  };
+  let textOnlyEmailData = await getTextOnlyEmails()
 
-  let textOnlyEmailResponse = await axios(textOnlyEmailRequestConfig);
-  let textOnlyEmailData = textOnlyEmailResponse.data;
+  // console.log({
+  //   htmlEmailData,
+  //   templateEmailData,
+  //   textOnlyEmailData
+  // })
 
   return {
     htmlEmailData,
@@ -221,42 +311,85 @@ async function getEmailInventory() {
 
 async function getTemplateInventory() {
   let accessToken = await getAccessToken();
+  let page = 0
+  let pageSize = 10000
+  let moreItems = true
+  let count = 0
+  let items = []
 
-  let templateRequestConfig = {
-    method: 'get',
-    url: `${origin}asset/v1/content/assets/?$page=1&$pagesize=10000&$filter=assetType.name=template&$fields=id,assetType,name,status`,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`
-    }
-  };
+  while (moreItems) {
+    page++
+    
+    let templateRequestConfig = {
+      method: 'get',
+      url: `${origin}asset/v1/content/assets/?$page=${page}&$pagesize=${pageSize}&$filter=assetType.name=template&$fields=id,assetType,name,status`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`
+      }
+    };
+  
+    let templateResponse = await axios(templateRequestConfig);
+    let templateData = templateResponse.data;
+    count += templateData.count
+    templateData.items.forEach((item) => items.push(item))
 
-  let templateResponse = await axios(templateRequestConfig);
-  let templateData = templateResponse.data;
+    moreItems = (templateData.count === 0 || templateData.count - pageSize < 0) ? false : true
 
-  return templateData;
+  }
+
+  return {
+    count,
+    page,
+    pageSize,
+    items
+  }
 }
 
 async function getCategories() {
   let accessToken = await getAccessToken();
+  let page = 0
+  let pageSize = 10000
+  let moreItems = true
+  let count = 0
+  let items = []
 
-  let categoryRequestConfig = {
-    method: 'get',
-    url: `${origin}asset/v1/content/categories?$page=1&$pagesize=500`,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`
-    }
-  };
-
-  try {
+  while (moreItems) {
+    page++
+    
+    let categoryRequestConfig = {
+      method: 'get',
+      url: `${origin}asset/v1/content/categories?$page=1&$pagesize=500`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`
+      }
+    };
     let categoryResponse = await axios(categoryRequestConfig);
     let categoryData = categoryResponse.data;
-    return categoryData;
-  } catch (e) {
-    console.log(e);
+    count += categoryData.count
+    categoryData.items.forEach((item) => items.push(item))
+
+    moreItems = (categoryData.count === 0 || categoryData.count - pageSize < 0) ? false : true
+
+  }
+
+  // console.log({
+  //   count,
+  //   page,
+  //   pageSize,
+  //   items
+  // })
+
+
+  return {
+    count,
+    page,
+    pageSize,
+    items
   }
 }
+
 
 async function getTriggeredSends() {
   let triggeredSendOptions = {
@@ -287,23 +420,45 @@ async function getTriggeredSends() {
 
 async function getCloudPages() {
   let accessToken = await getAccessToken();
+  let page = 0
+  let pageSize = 10000
+  let moreItems = true
+  let count = 0
+  let items = []
 
-  let cloudPageRequestConfig = {
-    method: 'get',
-    url: `${origin}asset/v1/content/assets/?$page=1&$pagesize=10000&$filter=assetType.name=webpage`,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`
-    }
-  };
-
-  try {
+  while (moreItems) {
+    page++
+    
+    let cloudPageRequestConfig = {
+      method: 'get',
+      url: `${origin}asset/v1/content/assets/?$page=1&$pagesize=10000&$filter=assetType.name=webpage`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`
+      }
+    };
     let cloudPageRequestResponse = await axios(cloudPageRequestConfig);
     let cloudPageData = cloudPageRequestResponse.data;
+    count += cloudPageData.count
+    cloudPageData.items.forEach((item) => items.push(item))
 
-    return cloudPageData;
-  } catch (e) {
-    console.log(e);
+    moreItems = (cloudPageData.count === 0 || cloudPageData.count - pageSize < 0) ? false : true
+
+  }
+
+  // console.log({
+  //   count,
+  //   page,
+  //   pageSize,
+  //   items
+  // })
+
+
+  return {
+    count,
+    page,
+    pageSize,
+    items
   }
 }
 
@@ -444,25 +599,48 @@ function getAutomations() {
 
 async function getJourneys() {
   let accessToken = await getAccessToken();
+  let page = 0
+  let pageSize = 10000
+  let moreItems = true
+  let count = 0
+  let items = []
 
-  let journeyRequestConfig = {
-    method: 'get',
-    url: `${origin}/interaction/v1/interactions?$page=1&$pagesize=10000&`,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`
-    }
-  };
-
-  try {
+  while (moreItems) {
+    page++
+    
+    let journeyRequestConfig = {
+      method: 'get',
+      url: `${origin}/interaction/v1/interactions?$page=1&$pagesize=10000&`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`
+      }
+    };
     let journeyRequestResponse = await axios(journeyRequestConfig);
     let journeyData = journeyRequestResponse.data;
+    count += journeyData.count
+    journeyData.items.forEach((item) => items.push(item))
 
-    return journeyData;
-  } catch (e) {
-    console.log(e);
+    moreItems = (journeyData.count === 0 || journeyData.count - pageSize < 0) ? false : true
+
+  }
+
+  // console.log({
+  //   count,
+  //   page,
+  //   pageSize,
+  //   items
+  // })
+
+
+  return {
+    count,
+    page,
+    pageSize,
+    items
   }
 }
+
 
 function getBusinessUnits() {
   let props = [
@@ -583,10 +761,6 @@ function getAccountUsers() {
   return accountUsers;
 }
 
-
-
-getAccountUsers().then(console.log)
-
 function getRoles() {
   let props = [
     'ObjectID',
@@ -615,25 +789,48 @@ function getRoles() {
 
 async function getAuditEvents() {
   let accessToken = await getAccessToken();
+  let page = 0
+  let pageSize = 10000
+  let moreItems = true
+  let count = 0
+  let items = []
 
-  let auditEventRequestConfig = {
-    method: 'get',
-    url: `${origin}data/v1/audit/auditEvents?$pagesize=10000`,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`
-    }
-  };
-
-  try {
+  while (moreItems) {
+    page++
+    
+    let auditEventRequestConfig = {
+      method: 'get',
+      url: `${origin}data/v1/audit/auditEvents?$pagesize=10000`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`
+      }
+    };
     let auditEventRequestResponse = await axios(auditEventRequestConfig);
     let auditEventData = auditEventRequestResponse.data;
+    count += auditEventData.count
+    auditEventData.items.forEach((item) => items.push(item))
 
-    return auditEventData;
-  } catch (e) {
-    console.log(e);
+    moreItems = (auditEventData.count === 0 || auditEventData.count - pageSize < 0) ? false : true
+
+  }
+
+  // console.log({
+  //   count,
+  //   page,
+  //   pageSize,
+  //   items
+  // })
+
+
+  return {
+    count,
+    page,
+    pageSize,
+    items
   }
 }
+
 
 async function getAllEventData() {
   let sendData = await getEventData('sent');
@@ -725,6 +922,58 @@ async function getSubscribersSummary() {
   }
 }
 
+function getJourneysSubscriberIsIn(subscriberKey) {
+
+}
+
+// Journey Audit logs shows information about how a Journey has been modified
+async function getJourneyAuditLog(journeyId) {
+  let accessToken = await getAccessToken();
+  let page = 0
+  let pageSize = 10000
+  let moreItems = true
+  let count = 0
+  let items = []
+
+  while (moreItems) {
+    page++
+    
+    // Get Html Email Inventory
+    let journeyAuditLogRequestConfig = {
+      method: 'get',
+      url: `${origin}interaction/v1/interactions/${journeyId}/audit/all?$page=${page}&$pagesize=${pageSize}`,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      }
+    };
+
+    let journeyAuditLogResponse = await axios(journeyAuditLogRequestConfig);
+    let journeyAuditLogData = journeyAuditLogResponse.data;
+    count += journeyAuditLogData.count
+    journeyAuditLogData.items.forEach((item) => items.push(item))
+
+    moreItems = (journeyAuditLogData.count === 0 || journeyAuditLogData.count - pageSize < 0) ? false : true
+
+  }
+
+  // console.log({
+  //   count,
+  //   page: page - 1,
+  //   pageSize,
+  //   items
+  // })
+
+  return {
+    count,
+    page,
+    pageSize,
+    items
+  }
+}
+
+// getJourneyAuditLog('dd3204f7-58c2-4aa5-8a98-f48551613e69')
+
 
 
 module.exports = {
@@ -743,5 +992,6 @@ module.exports = {
   getAccountUsers,
   getRoles,
   getSubscribersSummary,
-  getAuditEvents
+  getAuditEvents,
+  getJourneyAuditLog
 };
