@@ -429,9 +429,11 @@ class AccountInventory extends Component {
                 />
               }
             >
-              <DataTable items={inventoryItems}>
-                {columns}
-              </DataTable>
+              { inventoryItems && 
+                <DataTable items={inventoryItems}>
+                  {columns}
+                </DataTable> 
+              }
             </Card>
           </div>
         </IconSettings>

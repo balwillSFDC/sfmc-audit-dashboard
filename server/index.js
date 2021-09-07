@@ -744,7 +744,9 @@ app.get('/api/getAuditEvents/:id', async (req, res) => {
 
 // Add getJourneyAuditLog() job
 app.post('/api/getJourneyAuditLog', async (req, res) => {
-  let journeyId = req.body.journeyId
+  console.log('request sent for getJourneyAuditLog()');
+
+  let journeyId = req.body.journeyId  
 
   try {
     let job = await auditEventsQueue.add({

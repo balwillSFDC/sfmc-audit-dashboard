@@ -877,7 +877,7 @@ export const addGetJourneyAuditLogJob = (journeyId) => {
     });
 
     try {
-      let response = await axios.post(`/api/getJourneyAuditLogJob`, { journeyId });
+      let response = await axios.post(`/api/getJourneyAuditLog`, { journeyId });
 
       dispatch({
         type: 'ADD_JOURNEY_AUDIT_LOG_JOB_SUCCESS',
@@ -901,7 +901,7 @@ export const updateJourneyAuditLog = (id) => {
    });
 
    try {
-     let response = await axios.get(`/api/getAuditEvents/${id}`);
+     let response = await axios.get(`/api/getJourneyAuditLog/${id}`);
 
      if (response.data.state === 'completed') {
        dispatch({

@@ -53,6 +53,7 @@ WrappedDataTableCell.displayName = DataTableCell.displayName;
 
 const handleJourneyDetailModalOpen = (e) => {
   let state = store.getState()
+
   store.dispatch(changeJourneyDetailSelected(e.target.innerText))
   store.dispatch(toggleJourneyDetailModal(!state.isOpenJourneyDetailModal))
 }
@@ -159,13 +160,15 @@ class AccountInventoryDetails extends React.Component  {
           <DataTableColumn key='status' label='Status' property='status' />,
         ]
     
-        this.props.templateInventory.items.forEach(item => {
-          selectedObjectDetailsList.push({
-            customerKey: item.customerKey,
-            name: item.name,
-            status: item.status.name 
-          })
-        });
+        { this.props.items.length > 0 &&
+          this.props.templateInventory.items.forEach(item => {
+            selectedObjectDetailsList.push({
+              customerKey: item.customerKey,
+              name: item.name,
+              status: item.status.name 
+            })
+          });
+        }
 
         break;
 
@@ -500,7 +503,7 @@ class AccountInventoryDetails extends React.Component  {
                       <div className='slds-text-heading_small'>
                         {toTitleCase(this.props.accountInventorySelected)}
                       </div>
-                      <div class="slds-text-align_right">
+                      <div className="slds-text-align_right">
                         {`${this.state.items.length} items`}
                       </div>
                     </div>
