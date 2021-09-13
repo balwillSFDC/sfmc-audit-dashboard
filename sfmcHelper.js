@@ -922,9 +922,71 @@ async function getSubscribersSummary() {
   }
 }
 
-function getJourneysSubscriberIsIn(subscriberKey) {
+async function getJourneyDetails(journeyDefinitionKey) {
+  let accessToken = await getAccessToken();
+  let journeyRequestConfig = {
+    method: 'get',
+    url: `${origin}interaction/v1/interactions/key:${journeyDefinitionKey}`,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    },
+  };
+
+  let journeyRequestResponse = await axios(journeyRequestConfig);
+  let journeyRequestData = journeyRequestResponse.data;
+
+  // console.log(journeyRequestData)
+
+  return journeyRequestData
+}
+
+
+// getJourneyDetails("ff2a421c-17a6-300f-a1a5-b7e943d96b7b")
+
+// Function to accomplish 'await' within a forEach statement. Taken here: https://codeburst.io/javascript-async-await-with-foreach-b6ba62bbf404
+async function asyncForEach(array, callback) {
+  for (let i = 0; i < array.length; i++ ) {
+    await callback(array[i], i, array)
+  }
+}
+
+
+async function getJourneysSubscriberIsIn(arrayOfContactKeys) {
+  let accessToken = await getAccessToken();
+
+  let contactMembershipRequestConfig = {
+    method: 'post',
+    url: `${origin}interaction/v1/interactions/contactMembership`,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    },
+    data: { contactKeyList: arrayOfContactKeys } 
+  };
+
+  let contactMembershipResponse = await axios(contactMembershipRequestConfig);
+  let contactMembershipData = contactMembershipResponse.data;
+  let contactMemberships = contactMembershipData.results.contactMemberships
+
+  let detailedContactMembershipsList = []
+
+  // contactMemberships is an array of Journeys the contact is in. Definition Key is returned so we're using that to retrieve additional journey details
+  if (contactMemberships.length > 0) {
+    await asyncForEach(contactMemberships, async journey => {
+      let journeyDetails = await getJourneyDetails(journey.definitionKey)
+      journeyDetails.contactKey = journey.contactKey
+
+      detailedContactMembershipsList.push(journeyDetails)
+      
+    })
+  }
+
+  return detailedContactMembershipsList
 
 }
+
+// getJourneysSubscriberIsIn(["00Q4S000002CsSdUAK"]).then(console.log)
 
 // Journey Audit logs shows information about how a Journey has been modified
 async function getJourneyAuditLog(journeyId) {
@@ -938,7 +1000,6 @@ async function getJourneyAuditLog(journeyId) {
   while (moreItems) {
     page++
     
-    // Get Html Email Inventory
     let journeyAuditLogRequestConfig = {
       method: 'get',
       url: `${origin}interaction/v1/interactions/${journeyId}/audit/all?$page=${page}&$pagesize=${pageSize}`,
@@ -972,9 +1033,6 @@ async function getJourneyAuditLog(journeyId) {
   }
 }
 
-// getJourneyAuditLog('dd3204f7-58c2-4aa5-8a98-f48551613e69')
-
-
 
 module.exports = {
   getAllEventData,
@@ -993,5 +1051,7 @@ module.exports = {
   getRoles,
   getSubscribersSummary,
   getAuditEvents,
-  getJourneyAuditLog
+  getJourneyAuditLog,
+  getJourneyDetails,
+  getJourneysSubscriberIsIn
 };

@@ -787,6 +787,49 @@ app.get('/api/getJourneyAuditLog/:id', async (req, res) => {
 })
 
 
+// Add getJourneyDetails() job
+app.post('/api/getJourneyDetails', async (req, res) => {
+  console.log('request sent for getJourneyDetails()');
+
+  let journeyKey = req.body.journeyKey  
+
+  try {
+    let job = await accountInventoryQueue.add({
+      jobType: 'GET_JOURNEY_DETAILS',
+      journeyKey: journeyKey
+    });
+
+    res.json({
+      id: job.id,
+      state: await job.getState()
+    });
+  } catch (e) {
+    res.json({
+      error: e
+    });
+  }
+})
+
+// Retrieve getJourneyDetails() job results
+app.get('/api/getJourneyDetails/:id', async (req, res) => {
+  let id = req.params.id;
+
+  if (id) {
+    let job = await accountInventoryQueue.getJob(id);
+
+    if (job === null) {
+      res.status(404).end();
+    } else {
+      let state = await job.getState();
+      let result = job.returnvalue;
+      let reason = job.failedReason;
+      res.json({ id, state, result, reason });
+    }
+  } else {
+    res.status(400).send('You have either not included an id in your request');
+  }
+})
+
 
 
 // All remaining requests return the React app, so it can handle routing
@@ -801,3 +844,5 @@ app.listen(PORT, () => {
     }: listening on port ${PORT}`
   );
 });
+
+

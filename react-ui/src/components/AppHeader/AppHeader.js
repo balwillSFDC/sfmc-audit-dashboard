@@ -71,6 +71,25 @@ class AppHeader extends React.Component {
 
                 <li
                   className={`slds-context-bar__item ${
+                    this.state.pageSelected === '/journeyTools'
+                      ? 'slds-is-active'
+                      : null
+                  }`}
+                  id="journey-tools"
+                >
+                  <Link
+                    to="/journeyTools"
+                    className="slds-context-bar__label-action"
+                    onClick={() => this.setState({ pageSelected: '/journeyTools' })}
+                  >
+                    <span className="slds-truncate" title="JourneyTools">
+                      Journey Tools
+                    </span>
+                  </Link>
+                </li>
+
+                <li
+                  className={`slds-context-bar__item ${
                     this.state.pageSelected === '/download'
                       ? 'slds-is-active'
                       : null

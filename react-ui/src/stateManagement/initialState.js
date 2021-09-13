@@ -67,6 +67,9 @@ const initialState = {
   subscribersSummarySelected: '',
   isOpenJourneyDetailModal: false,
   journeyDetailSelected: '',
+  journeyDetails: {},
+  journeyDetailsJob: 0,
+  journeyDetailsJobState: '',
   journeyAuditLog: {},
   journeyAuditLogJob: 0,
   journeyAuditLogJobState: ''

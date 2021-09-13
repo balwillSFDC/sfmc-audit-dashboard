@@ -17,7 +17,8 @@ const {
   getAccountUsers,
   getSubscribersSummary,
   getAuditEvents,
-  getJourneyAuditLog
+  getJourneyAuditLog,
+  getJourneyDetails
 } = require('./sfmcHelper.js');
 
 
@@ -169,6 +170,11 @@ function start() {
     if (job.data.jobType == 'GET_ACCOUNT_USERS') {
       let accountUsersResult = await getAccountUsers();
       return accountUsersResult;
+    }
+
+    if (job.data.jobType == 'GET_JOURNEY_DETAILS') {
+      let journeyDetailsResult = await getJourneyDetails(job.data.journeyKey);
+      return journeyDetailsResult;
     }
   })
 }

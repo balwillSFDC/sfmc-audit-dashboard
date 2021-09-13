@@ -941,3 +941,53 @@ export const changeJourneyDetailSelected = (journeyDetailSelected) => {
     })
   }
 }
+
+export const addGetJourneyDetailsJob = (journeyKey) => {
+  return async (dispatch) => {
+    dispatch({
+      type: 'ADD_GET_JOURNEY_DETAILS_JOB'
+    });
+
+    try {
+      let response = await axios.post(`/api/getJourneyDetails`, { journeyKey });
+
+      dispatch({
+        type: 'ADD_GET_JOURNEY_DETAILS_JOB_SUCCESS',
+        payload: {
+          journeyDetailsJob: response.data.id,
+          journeyDetailsJobState: response.data.state
+        }
+      });
+    } catch (e) {
+      dispatch({
+        type: 'ADD_GET_JOURNEY_DETAILS_JOB_ERROR'
+      });
+    }
+  };
+}
+
+export const updateJourneyDetails = (id) => {
+  return async (dispatch) => {
+   dispatch({
+     type: 'UPDATE_JOURNEY_DETAILS'
+   });
+
+   try {
+     let response = await axios.get(`/api/getJourneyDetails/${id}`);
+
+     if (response.data.state === 'completed') {
+       dispatch({
+         type: 'UPDATE_JOURNEY_DETAILS_SUCCESS',
+         payload: {
+           journeyDetails: response.data.result,
+           journeyDetailsJobState: response.data.state
+         }
+       });
+     }
+   } catch (e) {
+     dispatch({
+       type: 'UPDATE_JOURNEY_DETAILS_ERROR'
+     });
+   }
+ };
+};

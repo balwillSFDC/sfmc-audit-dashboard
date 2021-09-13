@@ -14,6 +14,7 @@ import AuditTrail from '../AuditTrail/AuditTrail';
 import DownloadDataPage from '../DownloadDataPage/DownloadDataPage';
 import About from '../About/About';
 import JourneyDetailModal from '../JourneyDetailModal/JourneyDetailModal';
+import JourneyToolsPage from '../JourneyToolsPage/JourneyToolsPage';
 
 
 const mapStateToProps = (state) => {
@@ -64,6 +65,10 @@ class App extends React.Component {
 
             <Route exact path='/auditTrail'>
               <AuditTrail /> 
+            </Route>
+
+            <Route exact path='/journeyTools'>
+              <JourneyToolsPage /> 
             </Route>
 
             <Route exact path='/download'>

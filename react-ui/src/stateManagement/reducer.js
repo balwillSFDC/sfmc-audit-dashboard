@@ -391,6 +391,26 @@ const reducer = (state = initialState, action) => {
         ...state,
         journeyDetailSelected: action.payload.journeyDetailSelected
       }
+    case 'ADD_GET_JOURNEY_DETAILS_JOB':
+      return {
+        ...state
+      }
+    case 'ADD_GET_JOURNEY_DETAILS_JOB_SUCCESS':
+      return {
+        ...state,
+        journeyDetailsJob: action.payload.journeyDetailsJob,
+        journeyDetailsJobState: action.payload.journeyDetailsJobState
+      }
+    case 'UPDATE_JOURNEY_DETAILS':
+      return {
+        ...state
+      }
+    case 'UPDATE_JOURNEY_DETAILS_SUCCESS':
+      return {
+        ...state,
+        journeyDetails: action.payload.journeyDetails,
+        journeyDetailsJobState: action.payload.journeyDetailsJobState
+      }
     default:
       return state;
   }
