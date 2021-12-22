@@ -830,6 +830,46 @@ app.get('/api/getJourneyDetails/:id', async (req, res) => {
   }
 })
 
+// // testing getAllDataExtensionsV2() job
+// app.post('/api/getAllDataExtensionsV2', async (req, res) => {
+//   console.log('request sent for getAllDataExtensionsV2()');
+
+//   try {
+//     let job = await accountInventoryQueue.add({
+//       jobType: 'GET_DATA_EXTENSIONS_V2'
+//     });
+
+//     res.json({
+//       id: job.id,
+//       state: await job.getState()
+//     });
+//   } catch (e) {
+//     res.json({
+//       error: e
+//     });
+//   }
+// })
+
+
+// // testing getAllDataExtensionsV2() job results
+// app.get('/api/getAllDataExtensionsV2/:id', async (req, res) => {
+//   let id = req.params.id;
+
+//   if (id) {
+//     let job = await accountInventoryQueue.getJob(id);
+
+//     if (job === null) {
+//       res.status(404).end();
+//     } else {
+//       let state = await job.getState();
+//       let result = job.returnvalue;
+//       let reason = job.failedReason;
+//       res.json({ id, state, result, reason });
+//     }
+//   } else {
+//     res.status(400).send('You have either not included an id in your request');
+//   }
+// })
 
 
 // All remaining requests return the React app, so it can handle routing

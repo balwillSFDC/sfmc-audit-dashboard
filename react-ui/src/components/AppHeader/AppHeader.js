@@ -7,9 +7,28 @@ import {
   GlobalNavigationBar,
   GlobalNavigationBarLink,
   GlobalNavigationBarRegion,
-  GlobalNavigationBarButton
+  GlobalNavigationBarButton,
+  Dropdown,
+  ButtonGroup,
+  PageHeaderControl,
+  Button
 } from '@salesforce/design-system-react';
 import '../AppHeader/AppHeader.css';
+import { connect } from 'react-redux';
+
+const mapStateToProps = (state) => {
+  return {
+    businessUnits: state.businessUnits,
+    businessUnitsJobState: state.businessUnitsJobState,
+    businessUnitSelected: state.businessUnitSelected
+    // ...
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return { dispatch };
+};
+
 
 class AppHeader extends React.Component {
   constructor(props) {
@@ -21,6 +40,69 @@ class AppHeader extends React.Component {
   }
 
   render() {
+
+    let BUs;
+
+
+    if (this.props.businessUnitsJobState !== 'completed') {
+      BUs = [{ label: 'Finding Business Units...'}]
+    } else {
+      BUs = this.props.businessUnits.map((bu) => {
+        return {
+          label: `${bu.Name} - ${bu.ID}`,
+          value: bu.ID
+        }
+      })
+      BUs.unshift({
+        label: 'All Business Units',
+        value: 'All'
+      })
+    }
+
+    const handleBuDisplayText = () => {
+      let buSelected = this.props.businessUnitSelected
+      let BUs = this.props.businessUnits
+
+      if (this.props.businessUnitsJobState !== 'completed') {
+        return 'Loading...'
+      } else if (buSelected === 'All') {
+        return 'All Business Units'
+      } else if (buSelected && buSelected !== 'All') {
+        let bu = BUs.filter(bu => bu.ID == buSelected)
+        return `${bu[0].Name} - ${bu[0].ID}`
+      }
+
+    }
+
+    const actions = () => (
+      <PageHeaderControl>
+        <ButtonGroup>
+          <Button
+            label={handleBuDisplayText()}
+          />
+          <Dropdown
+            align="right"
+            assistiveText={{ icon: 'More Options' }}
+            iconCategory="utility"
+            iconName="down"
+            iconVariant="border-filled"
+            id="page-header-dropdown-object-home-nav-right"
+            label="Dropdown"
+            options={BUs}
+            checkmark
+            onSelect={(value) => {
+              this.props.dispatch({
+                type: 'UPDATE_BUSINESS_UNIT_SELECTED',
+                payload: {
+                  businessUnitSelected: value.value
+                }
+              })
+            }}
+          />     
+        </ButtonGroup>
+      </PageHeaderControl>
+    )
+
     return (
       <div id="app-header">
         <IconSettings iconPath="/icons/">
@@ -29,6 +111,7 @@ class AppHeader extends React.Component {
             title="SFMC Audit Dashboard"
             variant="object-home"
             info="Welcome to the SFMC Audit Dashboard"
+            onRenderActions={actions}
           />
           <div id="links" className="slds-theme_default">
             <div className="slds-context-bar">
@@ -69,7 +152,7 @@ class AppHeader extends React.Component {
                   </Link>
                 </li>
 
-                <li
+                {/* <li
                   className={`slds-context-bar__item ${
                     this.state.pageSelected === '/journeyTools'
                       ? 'slds-is-active'
@@ -86,7 +169,7 @@ class AppHeader extends React.Component {
                       Journey Tools
                     </span>
                   </Link>
-                </li>
+                </li> */}
 
                 <li
                   className={`slds-context-bar__item ${
@@ -115,7 +198,7 @@ class AppHeader extends React.Component {
                   }`}
                   id="about-link"
                 >
-                  <Link
+                  {/* <Link
                     to="/about"
                     className="slds-context-bar__label-action"
                     onClick={() => this.setState({ pageSelected: '/about' })}
@@ -123,7 +206,7 @@ class AppHeader extends React.Component {
                     <span className="slds-truncate" title="About">
                       About
                     </span>
-                  </Link>
+                  </Link> */}
                 </li>
               </div>
             </div>
@@ -134,4 +217,4 @@ class AppHeader extends React.Component {
   }
 }
 
-export default AppHeader;
+export default connect(mapStateToProps, mapDispatchToProps)(AppHeader);

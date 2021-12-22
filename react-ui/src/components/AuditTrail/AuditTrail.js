@@ -13,14 +13,16 @@ import {
 } from '@salesforce/design-system-react';
 import {
   addAuditEventsJob,
-  updateAuditEventsJob
+  updateAuditEventsJob,
+  filterItemsBySelectedMID
 } from '../../stateManagement/actions'
 
 const mapStateToProps = (state) => {
   return {
     auditEvents: state.auditEvents,
     auditEventsJob: state.auditEventsJob,
-    auditEventsJobState: state.auditEventsJobState
+    auditEventsJobState: state.auditEventsJobState,
+    businessUnitSelected: state.businessUnitSelected
   }
 }
 
@@ -128,7 +130,7 @@ class AuditTrail extends Component {
               }
             >
         <DataTable 
-          items={this.state.items}
+          items={filterItemsBySelectedMID(this.props.businessUnitSelected, this.state.items)}
           fixedHeader
           fixedLayout
         >

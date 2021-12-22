@@ -14,9 +14,11 @@ import JourneyDetailModal from '../JourneyDetailModal/JourneyDetailModal';
 import { 
   toggleJourneyDetailModal, 
   addGetJourneyAuditLogJob,
-  changeJourneyDetailSelected
+  changeJourneyDetailSelected,
+  filterItemsBySelectedMID
 } from '../../stateManagement/actions';
 import { store } from '../../stateManagement/store';
+import filter from '@salesforce/design-system-react/lib/components/combobox/filter';
 
 const mapDispatchToProps = (dispatch) => {
   return {dispatch}
@@ -39,7 +41,8 @@ const mapStateToProps = (state) => {
     journeys: state.journeys,
     businessUnits: state.businessUnits,
     accountUsers: state.accountUsers,
-    isOpenJourneyDetailModal: state.isOpenJourneyDetailModal
+    isOpenJourneyDetailModal: state.isOpenJourneyDetailModal,
+    businessUnitSelected: state.businessUnitSelected
   };
 };
 
@@ -103,7 +106,7 @@ class AccountInventoryDetails extends React.Component  {
           <DataTableColumn key='status' label='Status' property='status' />,
         ]
 
-        this.props.emailInventory.htmlEmailData.items.forEach(item => {
+        filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.emailInventory.htmlEmailData.items).forEach(item => {
           selectedObjectDetailsList.push({
             customerKey: item.customerKey,
             name: item.name,
@@ -121,7 +124,8 @@ class AccountInventoryDetails extends React.Component  {
           <DataTableColumn key='owner' label='Owner' property='owner' />,
           <DataTableColumn key='status' label='Status' property='status' />,
         ]
-        this.props.emailInventory.templateEmailData.items.forEach(item => {
+
+        filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.emailInventory.templateEmailData.items).forEach(item => {
           selectedObjectDetailsList.push({
             customerKey: item.customerKey,
             name: item.name,
@@ -141,7 +145,7 @@ class AccountInventoryDetails extends React.Component  {
           <DataTableColumn key='status' label='Status' property='status' />,
         ]
     
-        this.props.emailInventory.textOnlyEmailData.items.forEach(item => {
+        filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.emailInventory.textOnlyEmailData.items).forEach(item => {
           selectedObjectDetailsList.push({
             customerKey: item.customerKey,
             name: item.name,
@@ -160,15 +164,14 @@ class AccountInventoryDetails extends React.Component  {
           <DataTableColumn key='status' label='Status' property='status' />,
         ]
     
-        { this.props.items.length > 0 &&
-          this.props.templateInventory.items.forEach(item => {
-            selectedObjectDetailsList.push({
-              customerKey: item.customerKey,
-              name: item.name,
-              status: item.status.name 
-            })
-          });
-        }
+        filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.templateInventory.items).forEach(item => {
+          selectedObjectDetailsList.push({
+            customerKey: item.customerKey,
+            name: item.name,
+            status: item.status.name 
+          })
+        });
+        
 
         break;
 
@@ -182,7 +185,7 @@ class AccountInventoryDetails extends React.Component  {
           <DataTableColumn key='parentId' label='Parent Id' property='parentId' />
         ]
       
-        this.props.categories.items.forEach(item => {
+        filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.categories.items).forEach(item => {
           selectedObjectDetailsList.push({
             name: item.name,
             id: item.id,
@@ -208,7 +211,7 @@ class AccountInventoryDetails extends React.Component  {
           <DataTableColumn key='triggeredSendStatus' label='Status' property='triggeredSendStatus' />       
         ]
 
-        this.props.triggeredSends.forEach(item => {
+        filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.triggeredSends).forEach(item => {
           selectedObjectDetailsList.push({
             name: item.Name,
             customerKey: item.CustomerKey,
@@ -236,7 +239,7 @@ class AccountInventoryDetails extends React.Component  {
           <DataTableColumn key='status' label='Status' property='status' />
         ]
 
-        this.props.cloudPages.items.forEach(item => {
+        filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.cloudPages.items).forEach(item => {
           selectedObjectDetailsList.push({
             id: item.id,
             name: item.name,
@@ -266,7 +269,7 @@ class AccountInventoryDetails extends React.Component  {
           <DataTableColumn key='status' label='Status' property='status' />
         ]
 
-        this.props.dataExtensions.forEach(item => {
+        filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.dataExtensions).forEach(item => {
           selectedObjectDetailsList.push({
             name: item.Name,
             customerKey: item.CustomerKey,
@@ -294,7 +297,7 @@ class AccountInventoryDetails extends React.Component  {
           <DataTableColumn key='dataSourceCustomerKey' label='Data Source Customer Key' property='dataSourceCustomerKey' />
         ]
 
-        this.props.filterData.forEach(item => {
+        filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.filterData).forEach(item => {
           selectedObjectDetailsList.push({
             name: item.Name,
             customerKey: item.CustomerKey,
@@ -318,8 +321,7 @@ class AccountInventoryDetails extends React.Component  {
           <DataTableColumn key='status' label='Status' property='status' />,
         ]
 
-
-        this.props.queries.forEach(item => {
+        filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.queries).forEach(item => {
           selectedObjectDetailsList.push({
             name: item.Name,
             customerKey: item.CustomerKey,
@@ -343,7 +345,7 @@ class AccountInventoryDetails extends React.Component  {
           <DataTableColumn key='status' label='Status' property='status' />
         ]
 
-        this.props.automations.forEach(item => {
+        filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.automations).forEach(item => {
           selectedObjectDetailsList.push({
             name: item.Name,
             customerKey: item.CustomerKey,
@@ -376,7 +378,8 @@ class AccountInventoryDetails extends React.Component  {
           <DataTableColumn key='status' label='Status' property='status' />,
         ]
 
-        this.props.journeys.items.forEach(item => {
+
+        filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.journeys.items).forEach(item => {
           selectedObjectDetailsList.push({
             name: item.name,
             id: item.id,
@@ -418,7 +421,7 @@ class AccountInventoryDetails extends React.Component  {
           <DataTableColumn key='masterUnsubscribeBehavior' label='Master Unsubscribe Behavior' property='masterUnsubscribeBehavior' />
         ]
       
-        this.props.businessUnits.forEach(item => {
+        filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.businessUnits).forEach(item => {
           selectedObjectDetailsList.push({
             clientId: item.Client.ID,
             enterpriseId: item.Client.EnterpriseID,
@@ -460,8 +463,7 @@ class AccountInventoryDetails extends React.Component  {
           <DataTableColumn key='LastLogin' label='Last Login' property='lastLogin' />,  
         ]
                 
-
-        this.props.accountUsers.forEach(item => {
+        filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.accountUsers).forEach(item => {
           selectedObjectDetailsList.push({ 
             id: item.ID,
             customerKey: item.CustomerKey,

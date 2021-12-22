@@ -25,444 +25,33 @@ const sfmcNode = new ET_Client(clientId, clientSecret, stack, {
   }
 });
 
-function getEventData(eventType) {
-  switch (eventType) {
-    case 'sent':
-      let sentOptions = {
-        props: [
-          'SendID', 
-          'EventDate', 
-          'SubscriberKey',
-          'EventType',
-          'BatchID',
-          'TriggeredSendDefinitionObjectID',
-          'ListID'
-        ]
-      };
-
-      let sentEvent = sfmcNode.sentEvent(sentOptions);
-      let sentEventResults = new Promise((resolve, reject) => {
-        sentEvent.get((err, res) => {
-          if (err) console.log(err);
-          if (res) resolve(res.body.Results);
-        });
-      });
-
-      return sentEventResults;
-    case 'open':
-      let openOptions = {
-        props: [
-          'ID',
-          'SendID', 
-          'EventDate', 
-          'SubscriberKey',
-          'EventType',
-          'TriggeredSendDefinitionObjectID',
-          'BatchID'
-        ]
-      };
-
-      let openEvent = sfmcNode.openEvent(openOptions);
-      let openEventResults = new Promise((resolve, reject) => {
-        openEvent.get((err, res) => {
-          if (err) console.log(err);
-          if (res) resolve(res.body.Results);
-        });
-      });
-
-      return openEventResults;
-    case 'bounce':
-      let bounceOptions = {
-        props: [
-          'ID',
-          'SendID', 
-          'EventDate', 
-          'SubscriberKey',
-          'SMTPCode',
-          'SMTPReason',
-          'BounceCategory',
-          'EventType',
-          'TriggeredSendDefinitionObjectID',
-          'BatchID'
-        ]
-      };
-
-      let bounceEvent = sfmcNode.bounceEvent(bounceOptions);
-      let bounceEventResults = new Promise((resolve, reject) => {
-        bounceEvent.get((err, res) => {
-          if (err) console.log(err);
-          if (res) resolve(res.body.Results);
-        });
-      });
-
-      return bounceEventResults;
-    
-    case 'click':
-      let clickOptions = {
-        props: [
-          'ID',
-          'SendID', 
-          'EventDate', 
-          'SubscriberKey',
-          'SendID',
-          'SubscriberKey',
-          'EventType',
-          'TriggeredSendDefinitionObjectID',
-          'BatchID',
-          'URLID',
-          'URL'
-        ]
-      };
-
-      let clickEvent = sfmcNode.clickEvent(clickOptions);
-      let clickEventResults = new Promise((resolve, reject) => {
-        clickEvent.get((err, res) => {
-          if (err) console.log(err);
-          if (res) resolve(res.body.Results);
-        });
-      });
-
-      return clickEventResults;
-    case 'unsubscribe':
-      let unsubscribeOptions = {
-        props: [
-          'ID',
-          'SendID', 
-          'EventDate', 
-          'SubscriberKey',
-          'TriggeredSendDefinitionObjectID',
-          'BatchID',
-          'IsMasterUnsubscribed'
-        ]
-      };
-
-      let unsubscribeEvent = sfmcNode.unsubEvent(unsubscribeOptions);
-      let unsubscribeEventResults = new Promise((resolve, reject) => {
-        unsubscribeEvent.get((err, res) => {
-          if (err) console.log(err);
-          if (res) resolve(res.body.Results);
-        });
-      });
-
-      return unsubscribeEventResults;
-  }
-}
-
-async function getAccessToken() {
-  let data = JSON.stringify({
-    grant_type: 'client_credentials',
-    client_id: clientId,
-    client_secret: clientSecret
-  });
-
-  let config = {
-    method: 'post',
-    url: `${authOrigin}v2/token`,
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    data: data
-  };
-
-  let accessTokenResponse = await axios(config);
-  let accessToken = accessTokenResponse.data.access_token;
-
-  return accessToken;
-}
 
 
-async function getHtmlEmails() {
-  let accessToken = await getAccessToken();
-  let page = 0
-  let pageSize = 10000
-  let moreItems = true
-  let count = 0
-  let items = []
+// Creates account specifc ET Clients - this allows us to data from each business unit instead of only 1 
+async function instantiateETClients() {
+  let buMIDs = await getMIDs();
 
-  while (moreItems) {
-    page++
-    
-    // Get Html Email Inventory
-    let htmlEmailRequestConfig = {
-      method: 'get',
-      url: `${origin}asset/v1/content/assets/?$page=${page}&$pagesize=${pageSize}&$filter=assetType.name=htmlemail&$fields=id,customerkey,assettype,name,owner,data,status`,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
+  let etClients = {}
+  buMIDs.forEach((mid, i) => { 
+    etClients[mid] = new ET_Client(clientId, clientSecret, stack, {
+      origin,
+      authOrigin,
+      soapOrigin,
+      authOptions: {
+        authVersion: 2,
+        accountId: mid,
+        applicationType: 'Server'
       }
-    };
+    })})
 
-    let htmlEmailResponse = await axios(htmlEmailRequestConfig);
-    let htmlEmailData = htmlEmailResponse.data;
-    count += htmlEmailData.count
-    htmlEmailData.items.forEach((item) => items.push(item))
-
-    moreItems = (htmlEmailData.count === 0 || htmlEmailData.count - pageSize < 0) ? false : true
-
-  }
-
-  return {
-    count,
-    page,
-    pageSize,
-    items
-  }
+  return etClients
 }
 
-async function getTemplateEmails() {
-  let accessToken = await getAccessToken();
-  let page = 0
-  let pageSize = 10000
-  let moreItems = true
-  let count = 0
-  let items = []
-
-  while (moreItems) {
-    page++
-    
-    // Get Html Email Inventory
-    let templateEmailRequestConfig = {
-      method: 'get',
-      url: `${origin}asset/v1/content/assets/?$page=${page}&$pagesize=${pageSize}&$filter=assetType.name=templatebasedemail&$fields=id, customerkey,assettype,name,owner,data,status`,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`
-      }
-    };
+async function getDataExtensions() {
+  let etClients = await instantiateETClients()
+  let mids = Object.keys(etClients)
   
-    let templateEmailResponse = await axios(templateEmailRequestConfig);
-    let templateEmailData = templateEmailResponse.data;
-    count += templateEmailData.count
-    templateEmailData.items.forEach((item) => items.push(item))
-
-    moreItems = (templateEmailData.count === 0 || templateEmailData.count - pageSize < 0) ? false : true
-
-  }
-
-  return {
-    count,
-    page,
-    pageSize,
-    items
-  }
-}
-
-async function getTextOnlyEmails() {
-  let accessToken = await getAccessToken();
-  let page = 0
-  let pageSize = 10000
-  let moreItems = true
-  let count = 0
-  let items = []
-
-  while (moreItems) {
-    page++
-    
-    // Get Html Email Inventory
-    let textOnlyEmailRequestConfig = {
-      method: 'get',
-      url: `${origin}asset/v1/content/assets/?$page=${page}&$pagesize=${pageSize}&$filter=assetType.name=textonlyemail&$fields=id, customerkey,assettype,name,owner,data,status`,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`
-      }
-    };
   
-    let textOnlyEmailResponse = await axios(textOnlyEmailRequestConfig);
-    let textOnlyEmailData = textOnlyEmailResponse.data;
-    count += textOnlyEmailData.count
-    textOnlyEmailData.items.forEach((item) => items.push(item))
-
-    moreItems = (textOnlyEmailData.count === 0 || textOnlyEmailData.count - pageSize < 0) ? false : true
-
-  }
-
-  return {
-    count,
-    page,
-    pageSize,
-    items
-  }
-}
-
-async function getEmailInventory() {
-
-  // Get Html Email Inventory
-  let htmlEmailData = await getHtmlEmails()
-
-  // Get Template Based Email Inventory
-  let templateEmailData = await getTemplateEmails()
-
-  // Get Text Only Email Inventory
-  let textOnlyEmailData = await getTextOnlyEmails()
-
-  // console.log({
-  //   htmlEmailData,
-  //   templateEmailData,
-  //   textOnlyEmailData
-  // })
-
-  return {
-    htmlEmailData,
-    templateEmailData,
-    textOnlyEmailData
-  };
-}
-
-async function getTemplateInventory() {
-  let accessToken = await getAccessToken();
-  let page = 0
-  let pageSize = 10000
-  let moreItems = true
-  let count = 0
-  let items = []
-
-  while (moreItems) {
-    page++
-    
-    let templateRequestConfig = {
-      method: 'get',
-      url: `${origin}asset/v1/content/assets/?$page=${page}&$pagesize=${pageSize}&$filter=assetType.name=template&$fields=id,assetType,name,status`,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`
-      }
-    };
-  
-    let templateResponse = await axios(templateRequestConfig);
-    let templateData = templateResponse.data;
-    count += templateData.count
-    templateData.items.forEach((item) => items.push(item))
-
-    moreItems = (templateData.count === 0 || templateData.count - pageSize < 0) ? false : true
-
-  }
-
-  return {
-    count,
-    page,
-    pageSize,
-    items
-  }
-}
-
-async function getCategories() {
-  let accessToken = await getAccessToken();
-  let page = 0
-  let pageSize = 10000
-  let moreItems = true
-  let count = 0
-  let items = []
-
-  while (moreItems) {
-    page++
-    
-    let categoryRequestConfig = {
-      method: 'get',
-      url: `${origin}asset/v1/content/categories?$page=1&$pagesize=500`,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`
-      }
-    };
-    let categoryResponse = await axios(categoryRequestConfig);
-    let categoryData = categoryResponse.data;
-    count += categoryData.count
-    categoryData.items.forEach((item) => items.push(item))
-
-    moreItems = (categoryData.count === 0 || categoryData.count - pageSize < 0) ? false : true
-
-  }
-
-  // console.log({
-  //   count,
-  //   page,
-  //   pageSize,
-  //   items
-  // })
-
-
-  return {
-    count,
-    page,
-    pageSize,
-    items
-  }
-}
-
-
-async function getTriggeredSends() {
-  let triggeredSendOptions = {
-    props: [
-      'TriggeredSendDefinition.CreatedDate',
-      'TriggeredSendDefinition.CustomerKey',
-      'TriggeredSendDefinition.Name',
-      'TriggeredSendDefinition.Description',
-      'TriggeredSendDefinition.TriggeredSendType',
-      'TriggeredSendDefinition.TriggeredSendStatus',
-      'TriggeredSendDefinition.FromName',
-      'TriggeredSendDefinition.FromAddress',
-      'TriggeredSendDefinition.EmailSubject'
-    ]
-  };
-
-  let triggeredSend = sfmcNode.triggeredSend(triggeredSendOptions);
-  let triggeredSendResults = new Promise((resolve, reject) => {
-    triggeredSend.get((err, res) => {
-      if (err) console.log(err);
-      if (res) resolve(res.body.Results);
-    });
-  });
-
-  return triggeredSendResults;
-}
-
-
-async function getCloudPages() {
-  let accessToken = await getAccessToken();
-  let page = 0
-  let pageSize = 10000
-  let moreItems = true
-  let count = 0
-  let items = []
-
-  while (moreItems) {
-    page++
-    
-    let cloudPageRequestConfig = {
-      method: 'get',
-      url: `${origin}asset/v1/content/assets/?$page=1&$pagesize=10000&$filter=assetType.name=webpage`,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`
-      }
-    };
-    let cloudPageRequestResponse = await axios(cloudPageRequestConfig);
-    let cloudPageData = cloudPageRequestResponse.data;
-    count += cloudPageData.count
-    cloudPageData.items.forEach((item) => items.push(item))
-
-    moreItems = (cloudPageData.count === 0 || cloudPageData.count - pageSize < 0) ? false : true
-
-  }
-
-  // console.log({
-  //   count,
-  //   page,
-  //   pageSize,
-  //   items
-  // })
-
-
-  return {
-    count,
-    page,
-    pageSize,
-    items
-  }
-}
-
-function getAllDataExtensions() {
   var options = {
     props: [
       'ObjectID',
@@ -491,158 +80,35 @@ function getAllDataExtensions() {
     }
   };
 
-  const de = sfmcNode.dataExtension(options);
+  let promises = [];
 
-  let dataExtensionsResult = new Promise((resolve, reject) => {
-    de.get((err, res) => {
-      if (err) console.log(err);
-      if (res) resolve(res.body.Results);
+  for (mid of mids) {
+    let de = etClients[mid].dataExtension(options);
+
+    let dataExtensionsResult = new Promise((resolve, reject) => {
+      de.get((err, res) => {
+        if (err) console.log(err);
+        if (res) resolve(res.body.Results);
+      });
     });
-  });
-
-  return dataExtensionsResult;
-}
-
-function getFilterData() {
-  let props = [
-    'ObjectID',
-    'Client.ID',
-    'CategoryID',
-    'Client.ClientPartnerKey',
-    'Name',
-    'CustomerKey',
-    'Description',
-    'CreatedDate',
-    'ModifiedDate',
-    'DataFilter',
-    'DataSourceType',
-    'DataSourceClassName',
-    'DataSource.ID',
-    'DataSource.ObjectID',
-    'DataSource.Name',
-    'DataSource.ListName',
-    'DataSource.CustomerKey',
-    'DataSource.CreatedDate',
-    'DataSource.ModifiedDate'
-  ];
-
-  const filterDefinition = new Promise((resolve, reject) => {
-    sfmcNode.SoapClient.retrieve('filterdefinition', props, (err, res) => {
-      if (err) reject(err);
-      if (res && res.body.OverallStatus === 'OK') resolve(res.body.Results);
-    });
-  });
-
-  return filterDefinition;
-}
-
-function getQueries() {
-  let props = [
-    'ObjectID',
-    'Client.ID',
-    'Name',
-    'CustomerKey',
-    'Description',
-    'TargetType',
-    'TargetUpdateType',
-    'FileType',
-    'FileSpec',
-    'Status',
-    'CreatedDate',
-    'ModifiedDate',
-    'CategoryID'
-  ];
-
-  const queryDefinition = new Promise((resolve, reject) => {
-    sfmcNode.SoapClient.retrieve('querydefinition', props, (err, res) => {
-      if (err) reject(err);
-      if (res && res.body.OverallStatus === 'OK') resolve(res.body.Results);
-    });
-  });
-
-  return queryDefinition;
-}
-
-function getAutomations() {
-  let props = [
-    'ObjectID',
-    'Name',
-    'Description',
-    'Schedule.ID',
-    'CustomerKey',
-    'Client.ID',
-    'IsActive',
-    'CreatedDate',
-    'Client.CreatedBy',
-    'ModifiedDate',
-    'Client.ModifiedBy',
-    'Status',
-    'Client.EnterpriseID'
-  ];
-  let filter = {
-    filter: {
-      leftOperand: 'Status',
-      operator: 'IN',
-      rightOperand: [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8]
-    }
-  };
-
-  const automation = new Promise((resolve, reject) => {
-    sfmcNode.SoapClient.retrieve('Automation', props, filter, (err, res) => {
-      if (err) reject(err);
-      if (res && res.body.OverallStatus === 'OK') resolve(res.body.Results);
-    });
-  });
-
-  return automation;
-}
-
-async function getJourneys() {
-  let accessToken = await getAccessToken();
-  let page = 0
-  let pageSize = 10000
-  let moreItems = true
-  let count = 0
-  let items = []
-
-  while (moreItems) {
-    page++
-    
-    let journeyRequestConfig = {
-      method: 'get',
-      url: `${origin}/interaction/v1/interactions?$page=1&$pagesize=10000&`,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`
-      }
-    };
-    let journeyRequestResponse = await axios(journeyRequestConfig);
-    let journeyData = journeyRequestResponse.data;
-    count += journeyData.count
-    journeyData.items.forEach((item) => items.push(item))
-
-    moreItems = (journeyData.count === 0 || journeyData.count - pageSize < 0) ? false : true
-
+    promises.push(dataExtensionsResult)
   }
 
-  // console.log({
-  //   count,
-  //   page,
-  //   pageSize,
-  //   items
-  // })
+  return Promise.all(promises).then(results => {
+    return [].concat(...results)
+  })
 
-
-  return {
-    count,
-    page,
-    pageSize,
-    items
-  }
 }
 
+async function getMIDs() {
+  const businessUnits = await getBusinessUnits();
 
-function getBusinessUnits() {
+  let buMIDs = [];
+  businessUnits.forEach((result) => { buMIDs.push(result.Client.ID); });
+  return buMIDs;
+}
+
+async function getBusinessUnits() {
   let props = [
     'ID',
     'AccountType',
@@ -707,8 +173,18 @@ function getBusinessUnits() {
     'LanguageLocale.LocaleCode'
   ];
 
-  const businessUnit = new Promise((resolve, reject) => {
-    sfmcNode.SoapClient.retrieve('businessunit', props, (err, res) => {
+  const retrieveOptions = {
+    filter: {
+      leftOperand: 'Name',
+      operator: 'isNotNull',
+      rightOperand: ''
+    },
+    queryAllAccounts: true
+  }
+
+  const businessUnit = new Promise( async (resolve, reject) => {
+    
+    sfmcNode.SoapClient.retrieve('businessunit', props, retrieveOptions, (err, res) => {
       if (err) reject(err);
       if (res && res.body.OverallStatus === 'OK') resolve(res.body.Results);
     });
@@ -716,6 +192,802 @@ function getBusinessUnits() {
 
   return businessUnit;
 }
+
+
+async function getEventData(eventType) {
+  let etClients = await instantiateETClients()
+  let mids = await getMIDs()
+  let promises = [];
+
+  switch (eventType) {
+    case 'sent':
+      let sentOptions = {
+        props: [
+          'SendID', 
+          'EventDate', 
+          'SubscriberKey',
+          'EventType',
+          'BatchID',
+          'TriggeredSendDefinitionObjectID',
+          'ListID',
+          'Client.ID'
+        ]
+      };
+
+
+
+      for (mid of mids) {
+        let sentEvent = etClients[mid].sentEvent(sentOptions);
+        let sentEventResults = new Promise((resolve, reject) => {
+          sentEvent.get((err, res) => {
+            if (err) console.log(err);
+            if (res) resolve(res.body.Results);
+          });
+        });
+
+        promises.push(sentEventResults)
+      }
+
+      return Promise.all(promises).then(results => {
+        return [].concat(...results)
+      })
+    case 'open':
+      let openOptions = {
+        props: [
+          'ID',
+          'SendID', 
+          'EventDate', 
+          'SubscriberKey',
+          'EventType',
+          'TriggeredSendDefinitionObjectID',
+          'BatchID',
+          'Client.ID'
+        ]
+      };
+
+      for (mid of mids) {
+        let openEvent = etClients[mid].openEvent(openOptions);
+        let openEventResults = new Promise((resolve, reject) => {
+          openEvent.get((err, res) => {
+            if (err) console.log(err);
+            if (res) resolve(res.body.Results);
+          });
+        });
+
+        promises.push(openEventResults)
+      }
+
+
+      return Promise.all(promises).then(results => {
+        return [].concat(...results)
+      })
+
+    case 'bounce':
+      let bounceOptions = {
+        props: [
+          'ID',
+          'SendID', 
+          'EventDate', 
+          'SubscriberKey',
+          'SMTPCode',
+          'SMTPReason',
+          'BounceCategory',
+          'EventType',
+          'TriggeredSendDefinitionObjectID',
+          'BatchID',
+          'Client.ID'
+        ]
+      };
+
+      for (mid of mids) {
+        let bounceEvent = etClients[mid].bounceEvent(bounceOptions);
+        let bounceEventResults = new Promise((resolve, reject) => {
+          bounceEvent.get((err, res) => {
+            if (err) console.log(err);
+            if (res) resolve(res.body.Results);
+          });
+        });
+
+        promises.push(bounceEventResults)
+      }
+
+
+      return Promise.all(promises).then(results => {
+        return [].concat(...results)
+      })
+
+    case 'click':
+      let clickOptions = {
+        props: [
+          'ID',
+          'SendID', 
+          'EventDate', 
+          'SubscriberKey',
+          'SendID',
+          'SubscriberKey',
+          'EventType',
+          'TriggeredSendDefinitionObjectID',
+          'BatchID',
+          'URLID',
+          'URL',
+          'Client.ID'
+        ]
+      };
+
+      for (mid of mids) {
+        let clickEvent = etClients[mid].clickEvent(clickOptions);
+        let clickEventResults = new Promise((resolve, reject) => {
+          clickEvent.get((err, res) => {
+            if (err) console.log(err);
+            if (res) resolve(res.body.Results);
+          });
+        });
+
+        promises.push(clickEventResults)
+      }
+
+
+      return Promise.all(promises).then(results => {
+        return [].concat(...results)
+      })
+      
+    case 'unsubscribe':
+      let unsubscribeOptions = {
+        props: [
+          'ID',
+          'SendID', 
+          'EventDate', 
+          'SubscriberKey',
+          'TriggeredSendDefinitionObjectID',
+          'BatchID',
+          'IsMasterUnsubscribed',
+          'Client.ID'
+        ],
+        // filter: {
+        //   leftOperand: 'SubscriberKey',
+        //   operator: 'isNotNull',
+        //   rightOperand: ''
+        // }
+      };
+
+      for (mid of mids) {
+        let unsubscribeEvent = etClients[mid].unsubEvent(unsubscribeOptions);
+        let unsubscribeEventResults = new Promise((resolve, reject) => {
+          unsubscribeEvent.get((err, res) => {
+            if (err) console.log(err);
+            if (res) resolve(res.body.Results);
+          });
+        });
+
+        promises.push(unsubscribeEventResults)
+      }
+
+
+      return Promise.all(promises).then(results => {
+        return [].concat(...results)
+      })
+  }
+}
+
+async function getAllEventData() {
+  let sendData = await getEventData('sent');
+  let openData = await getEventData('open');
+  let bounceData = await getEventData('bounce');
+  let clickData = await getEventData('click');
+  let unsubscribeData = await getEventData('unsubscribe');
+
+  return {
+    sendData,
+    openData,
+    bounceData,
+    clickData,
+    unsubscribeData
+  };
+}
+
+async function getAccessToken(mid) {
+  let tokenReqConfig;
+  
+  if (mid == undefined || mid == null) {
+    tokenReqConfig = {
+      grant_type: 'client_credentials',
+      client_id: clientId,
+      client_secret: clientSecret
+    }
+  } else {
+    tokenReqConfig = {
+      grant_type: 'client_credentials',
+      client_id: clientId,
+      client_secret: clientSecret,
+      account_id: mid
+    }
+  }
+  
+  let data = JSON.stringify(tokenReqConfig);
+
+  let config = {
+    method: 'post',
+    url: `${authOrigin}v2/token`,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    data: data
+  };
+
+  let accessTokenResponse = await axios(config);
+  let accessToken = accessTokenResponse.data.access_token;
+
+  return accessToken;
+}
+
+
+async function getHtmlEmails() {
+  let mids = await getMIDs()
+  let count_AllMids = 0;
+  let items_AllMids = []; 
+
+  for (mid of mids) {
+    let accessToken = await getAccessToken(mid);
+    let page = 0
+    let pageSize = 10000
+    let moreItems = true
+    let count = 0
+    let items = []
+
+    while (moreItems) {
+      page++
+      
+      // Get Html Email Inventory
+      let htmlEmailRequestConfig = {
+        method: 'get',
+        url: `${origin}asset/v1/content/assets/?$page=${page}&$pagesize=${pageSize}&$filter=assetType.name=htmlemail&$fields=id,customerkey,assettype,name,owner,data,status,memberId`,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        }
+      };
+  
+      let htmlEmailResponse = await axios(htmlEmailRequestConfig);
+      let htmlEmailData = htmlEmailResponse.data;
+      count += htmlEmailData.count
+      count_AllMids += htmlEmailData.count
+      htmlEmailData.items.forEach((item) => {
+        items.push(item)
+        items_AllMids.push(item)
+      })
+  
+      moreItems = (htmlEmailData.count === 0 || htmlEmailData.count - pageSize < 0) ? false : true
+    }
+  }
+
+  return {
+    count: count_AllMids,
+    items: items_AllMids,
+  }
+}
+
+async function getTemplateEmails() {
+  let mids = await getMIDs()
+  let count_AllMids = 0;
+  let items_AllMids = []; 
+
+  for (mid of mids) {
+    let accessToken = await getAccessToken(mid);
+    let page = 0
+    let pageSize = 10000
+    let moreItems = true
+    let count = 0
+    let items = []
+  
+    while (moreItems) {
+      page++
+      
+      // Get Html Email Inventory
+      let templateEmailRequestConfig = {
+        method: 'get',
+        url: `${origin}asset/v1/content/assets/?$page=${page}&$pagesize=${pageSize}&$filter=assetType.name=templatebasedemail&$fields=id, customerkey,assettype,name,owner,data,status,memberId`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`
+        }
+      };
+    
+      let templateEmailResponse = await axios(templateEmailRequestConfig);
+      let templateEmailData = templateEmailResponse.data;
+      count += templateEmailData.count
+      count_AllMids += templateEmailData.count
+      templateEmailData.items.forEach((item) => {
+        items.push(item)
+        items_AllMids.push(item)
+      })
+  
+      moreItems = (templateEmailData.count === 0 || templateEmailData.count - pageSize < 0) ? false : true
+
+    }
+  }
+
+  return {
+    count: count_AllMids,
+    items: items_AllMids
+  }
+}
+
+async function getTextOnlyEmails() {
+  let mids = await getMIDs()
+  let count_AllMids = 0;
+  let items_AllMids = []; 
+
+  for (mid of mids) {
+    let accessToken = await getAccessToken(mid);
+    let page = 0
+    let pageSize = 10000
+    let moreItems = true
+    let count = 0
+    let items = []
+
+    while (moreItems) {
+      page++
+      
+      // Get Html Email Inventory
+      let textOnlyEmailRequestConfig = {
+        method: 'get',
+        url: `${origin}asset/v1/content/assets/?$page=${page}&$pagesize=${pageSize}&$filter=assetType.name=textonlyemail&$fields=id, customerkey,assettype,name,owner,data,status,memberId`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`
+        }
+      };
+    
+      let textOnlyEmailResponse = await axios(textOnlyEmailRequestConfig);
+      let textOnlyEmailData = textOnlyEmailResponse.data;
+      count += textOnlyEmailData.count
+      count_AllMids += textOnlyEmailData.count
+      textOnlyEmailData.items.forEach((item) => {
+        items.push(item)
+        items_AllMids.push(item)
+      })
+
+      moreItems = (textOnlyEmailData.count === 0 || textOnlyEmailData.count - pageSize < 0) ? false : true
+
+    }
+  }
+  
+  return {
+    count: count_AllMids,
+    items: items_AllMids
+  }
+}
+
+async function getEmailInventory() {
+
+  // Get Html Email Inventory
+  let htmlEmailData = await getHtmlEmails()
+
+  // Get Template Based Email Inventory
+  let templateEmailData = await getTemplateEmails()
+
+  // Get Text Only Email Inventory
+  let textOnlyEmailData = await getTextOnlyEmails()
+
+  // console.log({
+  //   htmlEmailData,
+  //   templateEmailData,
+  //   textOnlyEmailData
+  // })
+
+  return {
+    htmlEmailData,
+    templateEmailData,
+    textOnlyEmailData
+  };
+}
+
+async function getTemplateInventory() {
+  let mids = await getMIDs()
+  let count_AllMids = 0;
+  let items_AllMids = []; 
+
+  for (mid of mids) {
+    let accessToken = await getAccessToken(mid);
+    let page = 0
+    let pageSize = 10000
+    let moreItems = true
+    let count = 0
+    let items = []
+  
+    while (moreItems) {
+      page++
+      
+      let templateRequestConfig = {
+        method: 'get',
+        url: `${origin}asset/v1/content/assets/?$page=${page}&$pagesize=${pageSize}&$filter=assetType.name=template&$fields=id,assetType,name,status,memberId`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`
+        }
+      };
+    
+      let templateResponse = await axios(templateRequestConfig);
+      let templateData = templateResponse.data;
+      count += templateData.count
+      count_AllMids += templateData.count
+      templateData.items.forEach((item) => {
+        items.push(item)
+        items_AllMids.push(item)
+      })
+  
+      moreItems = (templateData.count === 0 || templateData.count - pageSize < 0) ? false : true
+  
+    }  
+  }
+
+  return {
+    count: count_AllMids,
+    items: items_AllMids
+  }
+}
+
+async function getCategories() {
+  let mids = await getMIDs()
+  let count_AllMids = 0;
+  let items_AllMids = []; 
+
+  for (mid of mids) {
+    let accessToken = await getAccessToken(mid);
+    let page = 0
+    let pageSize = 10000
+    let moreItems = true
+    let count = 0
+    let items = []
+
+    while (moreItems) {
+      page++
+      
+      let categoryRequestConfig = {
+        method: 'get',
+        url: `${origin}asset/v1/content/categories?$page=1&$pagesize=500`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`
+        }
+      };
+      let categoryResponse = await axios(categoryRequestConfig);
+      let categoryData = categoryResponse.data;
+      count += categoryData.count
+      count_AllMids += categoryData.count
+      categoryData.items.forEach((item) => {
+        items.push(item)
+        items_AllMids.push(item)
+      })
+
+      moreItems = (categoryData.count === 0 || categoryData.count - pageSize < 0) ? false : true
+
+    }
+  }
+
+  return {
+    count: count_AllMids,
+    items: items_AllMids
+  }
+}
+
+
+async function getTriggeredSends() {
+  let etClients = await instantiateETClients()
+  let mids = await getMIDs()
+  let promises = [];
+
+  let triggeredSendOptions = {
+    props: [
+      'TriggeredSendDefinition.CreatedDate',
+      'TriggeredSendDefinition.CustomerKey',
+      'TriggeredSendDefinition.Name',
+      'TriggeredSendDefinition.Description',
+      'TriggeredSendDefinition.TriggeredSendType',
+      'TriggeredSendDefinition.TriggeredSendStatus',
+      'TriggeredSendDefinition.FromName',
+      'TriggeredSendDefinition.FromAddress',
+      'TriggeredSendDefinition.EmailSubject',
+      'Client.ID'
+    ]
+  };
+
+
+  for (mid of mids) {
+    let triggeredSend = etClients[mid].triggeredSend(triggeredSendOptions);
+    let triggeredSendResults = new Promise((resolve, reject) => {
+      triggeredSend.get((err, res) => {
+        if (err) console.log(err);
+        if (res) resolve(res.body.Results);
+      });
+    });
+
+    promises.push(triggeredSendResults)
+  }
+  
+  return Promise.all(promises).then(results => {
+    return [].concat(...results)
+  })
+}
+
+async function getCloudPages() {
+  let mids = await getMIDs()
+  let count_AllMids = 0;
+  let items_AllMids = []; 
+
+  for (mid of mids) {
+    let accessToken = await getAccessToken(mid);
+    let page = 0
+    let pageSize = 10000
+    let moreItems = true
+    let count = 0
+    let items = []
+  
+    while (moreItems) {
+      page++
+      
+      let cloudPageRequestConfig = {
+        method: 'get',
+        url: `${origin}asset/v1/content/assets/?$page=1&$pagesize=10000&$filter=assetType.name=webpage`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`
+        }
+      };
+      let cloudPageRequestResponse = await axios(cloudPageRequestConfig);
+      let cloudPageData = cloudPageRequestResponse.data;
+      count += cloudPageData.count
+      count_AllMids += cloudPageData.count
+      cloudPageData.items.forEach((item) => {
+        items.push(item)
+        items_AllMids.push(item)
+      })
+  
+      moreItems = (cloudPageData.count === 0 || cloudPageData.count - pageSize < 0) ? false : true
+  
+    }
+  }
+
+  return {
+    count: count_AllMids,
+    items: items_AllMids
+  }
+}
+
+// function getAllDataExtensions() {
+//   var options = {
+//     props: [
+//       'ObjectID',
+//       'CustomerKey',
+//       'Name',
+//       'CreatedDate',
+//       'ModifiedDate',
+//       'Client.ID',
+//       'Description',
+//       'IsSendable',
+//       'IsTestable',
+//       'Status',
+//       'IsPlatformObject',
+//       'DataRetentionPeriodLength',
+//       'DataRetentionPeriodUnitOfMeasure',
+//       'RowBasedRetention',
+//       'ResetRetentionPeriodOnImport',
+//       'DeleteAtEndOfRetentionPeriod',
+//       'RetainUntil',
+//       'DataRetentionPeriod'
+//     ],
+//     filter: {
+//       leftOperand: 'Client.ID',
+//       operator: 'isNotNull',
+//       rightOperand: ''
+//     },
+//     queryAllAccounts: true
+//   };
+
+//   const de = sfmcNode.dataExtension(options);
+
+//   let dataExtensionsResult = new Promise((resolve, reject) => {
+//     de.get((err, res) => {
+//       if (err) console.log(err);
+//       if (res) resolve(res.body.Results);
+//     });
+//   });
+
+//   return dataExtensionsResult;
+// }
+
+
+async function getFilterData() {
+  let etClients = await instantiateETClients()
+  let mids = await getMIDs()
+  let promises = [];
+
+  let props = [
+    'ObjectID',
+    'Client.ID',
+    'CategoryID',
+    'Client.ClientPartnerKey',
+    'Name',
+    'CustomerKey',
+    'Description',
+    'CreatedDate',
+    'ModifiedDate',
+    'DataFilter',
+    'DataSourceType',
+    'DataSourceClassName',
+    'DataSource.ID',
+    'DataSource.ObjectID',
+    'DataSource.Name',
+    'DataSource.ListName',
+    'DataSource.CustomerKey',
+    'DataSource.CreatedDate',
+    'DataSource.ModifiedDate'
+  ];
+
+  for (mid of mids) {
+    const filterDefinition = new Promise((resolve, reject) => {
+      etClients[mid].SoapClient.retrieve('filterdefinition', props, (err, res) => {
+        if (err) reject(err);
+        if (res && res.body.OverallStatus === 'OK') resolve(res.body.Results);
+      });
+    });
+
+    promises.push(filterDefinition)
+  }
+  
+  return Promise.all(promises).then(results => {
+    return [].concat(...results)
+  })
+
+}
+
+async function getQueries() {
+  let etClients = await instantiateETClients()
+  let mids = await getMIDs()
+  let promises = [];
+
+  let props = [
+    'ObjectID',
+    'Client.ID',
+    'Name',
+    'CustomerKey',
+    'Description',
+    'TargetType',
+    'TargetUpdateType',
+    'FileType',
+    'FileSpec',
+    'Status',
+    'CreatedDate',
+    'ModifiedDate',
+    'CategoryID'
+  ];
+
+  for (mid of mids) {
+    const queryDefinition = new Promise((resolve, reject) => {
+      etClients[mid].SoapClient.retrieve('querydefinition', props, (err, res) => {
+        if (err) reject(err);
+        if (res && res.body.OverallStatus === 'OK') resolve(res.body.Results);
+      });
+    });
+
+    promises.push(queryDefinition)
+  }
+  
+  return Promise.all(promises).then(results => {
+    return [].concat(...results)
+  })
+
+}
+
+async function getAutomations() {
+  let etClients = await instantiateETClients()
+  let mids = await getMIDs()
+  let promises = [];
+
+  let props = [
+    'ObjectID',
+    'Name',
+    'Description',
+    'Schedule.ID',
+    'CustomerKey',
+    'Client.ID',
+    'IsActive',
+    'CreatedDate',
+    'Client.CreatedBy',
+    'ModifiedDate',
+    'Client.ModifiedBy',
+    'Status',
+    'Client.EnterpriseID',
+  ];
+
+  let filter = {
+    filter: {
+      leftOperand: 'Status',
+      operator: 'IN',
+      rightOperand: [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8]
+    },
+    queryAllAccounts: true
+  };
+
+
+  for (mid of mids) {
+    const mid_cache = mid 
+    const automation = new Promise((resolve, reject) => {
+      etClients[mid].SoapClient.retrieve('Automation', props, filter, (err, res) => {
+        if (err) reject(err);
+        if (res && res.body.OverallStatus === 'OK' && res.body.Results.length > 0) {
+          let results = res.body.Results 
+          results.forEach(result => result.memberId = mid_cache)
+          resolve(results);
+        }
+      });
+    });
+
+    promises.push(automation)
+  }
+  
+  return Promise.all(promises).then(results => {
+    return [].concat(...results)
+  })
+
+}
+
+async function getJourneys() {
+  let mids = await getMIDs()
+  let count_AllMids = 0;
+  let items_AllMids = []; 
+
+  for (mid of mids) {
+    let accessToken = await getAccessToken(mid);
+    let page = 0
+    let pageSize = 10000
+    let moreItems = true
+    let count = 0
+    let items = []
+    const mid_cache = mid
+
+    while (moreItems) {
+      page++
+      
+      let journeyRequestConfig = {
+        method: 'get',
+        url: `${origin}/interaction/v1/interactions?$page=${page}&$pagesize=10000&`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`
+        }
+      };
+
+      let journeyRequestResponse = await axios(journeyRequestConfig);
+      let journeyData = journeyRequestResponse.data;
+      count += journeyData.count
+      count_AllMids += journeyData.count
+      journeyData.items.forEach((item) => {
+        item.memberId = mid_cache
+        items.push(item)
+        items_AllMids.push(item)
+      })
+  
+      moreItems = (journeyData.count === 0 || journeyData.count - pageSize < 0) ? false : true
+  
+    }
+  }
+
+  // console.log({
+  //   count,
+  //   page,
+  //   pageSize,
+  //   items
+  // })
+
+
+  return {
+    count: count_AllMids,
+    items: items_AllMids,
+  }
+}
+
+getJourneys().then(console.log)
 
 function getAccountUsers() {
   let props = [
@@ -748,9 +1020,11 @@ function getAccountUsers() {
       leftOperand: 'AccountUser.NotificationEmailAddress',
       operator: 'notEquals',
       rightOperand: ' '
-    }
+    },
+    queryAllAccounts: true
   };
 
+  // getAccountUsers() doesn't need to loop through MIDs
   const accountUsers = new Promise((resolve, reject) => {
     sfmcNode.SoapClient.retrieve('accountuser', props, filter, (err, res) => {
       if (err) reject(err);
@@ -761,6 +1035,7 @@ function getAccountUsers() {
   return accountUsers;
 }
 
+// still getRoles() function returns...
 function getRoles() {
   let props = [
     'ObjectID',
@@ -787,65 +1062,49 @@ function getRoles() {
   return roles;
 }
 
+
 async function getAuditEvents() {
-  let accessToken = await getAccessToken();
-  let page = 0
-  let pageSize = 10000
-  let moreItems = true
-  let count = 0
-  let items = []
+  let mids = await getMIDs()
+  let count_AllMids = 0;
+  let items_AllMids = []; 
 
-  while (moreItems) {
-    page++
-    
-    let auditEventRequestConfig = {
-      method: 'get',
-      url: `${origin}data/v1/audit/auditEvents?$pagesize=10000`,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`
-      }
-    };
-    let auditEventRequestResponse = await axios(auditEventRequestConfig);
-    let auditEventData = auditEventRequestResponse.data;
-    count += auditEventData.count
-    auditEventData.items.forEach((item) => items.push(item))
-
-    moreItems = (auditEventData.count === 0 || auditEventData.count - pageSize < 0) ? false : true
-
+  for (mid of mids) {
+    let accessToken = await getAccessToken(mid);
+    let page = 0
+    let pageSize = 100
+    let moreItems = true
+    let count = 0
+    let items = []
+  
+    while (moreItems) {
+      page++
+      
+      let auditEventRequestConfig = {
+        method: 'get',
+        url: `${origin}data/v1/audit/auditEvents?$page=${page}&$pagesize=100`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`
+        }
+      };
+      let auditEventRequestResponse = await axios(auditEventRequestConfig);
+      let auditEventData = auditEventRequestResponse.data;
+      count += auditEventData.count
+      count_AllMids += auditEventData.count
+      auditEventData.items.forEach((item) => {
+        items.push(item)
+        items_AllMids.push(item)
+      })
+  
+      moreItems = (auditEventData.count === 0 || auditEventData.count - pageSize < 0) ? false : true
+  
+    }
   }
 
-  // console.log({
-  //   count,
-  //   page,
-  //   pageSize,
-  //   items
-  // })
-
-
   return {
-    count,
-    page,
-    pageSize,
-    items
+    count: count_AllMids,
+    items: items_AllMids
   }
-}
-
-
-async function getAllEventData() {
-  let sendData = await getEventData('sent');
-  let openData = await getEventData('open');
-  let bounceData = await getEventData('bounce');
-  let clickData = await getEventData('click');
-  let unsubscribeData = await getEventData('unsubscribe');
-
-  return {
-    sendData,
-    openData,
-    bounceData,
-    clickData,
-    unsubscribeData
-  };
 }
 
 function getSubscribers() {
@@ -856,10 +1115,12 @@ function getSubscribers() {
       'EmailAddress',
       'CreatedDate',
       'Status',
-      'UnsubscribedDate'
+      'UnsubscribedDate',
+      'Client.ID'
     ]
   };
 
+  // All subscribers data is stored in enterprise BU, no need to cycle through MIDs
   let subscriber = sfmcNode.subscriber(subscriberOptions);
 
   let subscriberResults = new Promise((resolve, reject) => {
@@ -986,8 +1247,6 @@ async function getJourneysSubscriberIsIn(arrayOfContactKeys) {
 
 }
 
-// getJourneysSubscriberIsIn(["00Q4S000002CsSdUAK"]).then(console.log)
-
 // Journey Audit logs shows information about how a Journey has been modified
 async function getJourneyAuditLog(journeyId) {
   let accessToken = await getAccessToken();
@@ -1041,7 +1300,7 @@ module.exports = {
   getCategories,
   getTriggeredSends,
   getCloudPages,
-  getAllDataExtensions,
+  // getAllDataExtensions,
   getFilterData,
   getQueries,
   getAutomations,
@@ -1053,5 +1312,6 @@ module.exports = {
   getAuditEvents,
   getJourneyAuditLog,
   getJourneyDetails,
-  getJourneysSubscriberIsIn
+  getJourneysSubscriberIsIn,
+  getDataExtensions
 };

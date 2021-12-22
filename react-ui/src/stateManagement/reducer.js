@@ -411,6 +411,13 @@ const reducer = (state = initialState, action) => {
         journeyDetails: action.payload.journeyDetails,
         journeyDetailsJobState: action.payload.journeyDetailsJobState
       }
+    case 'UPDATE_BUSINESS_UNIT_SELECTED':
+      
+    
+      return{
+        ...state,
+        businessUnitSelected: action.payload.businessUnitSelected,
+      }
     default:
       return state;
   }

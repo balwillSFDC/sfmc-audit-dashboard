@@ -991,3 +991,17 @@ export const updateJourneyDetails = (id) => {
    }
  };
 };
+
+export const filterItemsBySelectedMID = (mid, itemsArray) => {
+  if (mid === 'All') {
+    return itemsArray
+  } else {
+    return itemsArray.filter(item => {
+      if (item.hasOwnProperty('memberId')) {
+        return item.memberId == mid
+      } else {
+        return item.Client.ID == mid
+      }
+    })
+  }
+}

@@ -4,14 +4,15 @@ import {
   changeEmailActivitySelected,
   clearEmailActivitySelected 
 } from '../../stateManagement/actions';
-
+import { filterItemsBySelectedMID } from '../../stateManagement/actions';
 
 const mapStateToProps = (state) => {
   return {
     eventDataJob: state.eventDataJob,
     eventData: state.eventData,
     eventDataJobState: state.eventDataJobState,
-    emailActivitySelected: state.emailActivitySelected
+    emailActivitySelected: state.emailActivitySelected,
+    businessUnitSelected: state.businessUnitSelected
   };
 };
 
@@ -44,31 +45,36 @@ class EmailActivityTile extends Component {
       case 'sends':
         label = 'Sends'
         eventDataSelection = 'sendData'
-        eventDataCount = this.props.eventData.sendData.length
+        if (this.props.businessUnitSelected === 'All') {
+          eventDataCount = this.props.eventData.sendData.length
+        } else {
+          eventDataCount = filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.eventData.sendData).length || 0 
+        }
+        
         break;
 
       case 'opens':
         label = 'Opens'
         eventDataSelection = 'openData'
-        eventDataCount = this.props.eventData.openData.length
+        eventDataCount = filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.eventData.openData).length || 0 
         break;
 
       case 'bounces':
         label = 'Bounces'
         eventDataSelection = 'bounceData'
-        eventDataCount = this.props.eventData.bounceData.length
+        eventDataCount = filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.eventData.bounceData).length || 0 
         break;
 
       case 'clicks':
         label = 'Clicks'
         eventDataSelection = 'clickData'
-        eventDataCount = this.props.eventData.clickData.length
+        eventDataCount = filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.eventData.clickData).length || 0 
         break;
 
       case 'unsubscribes':
         label = 'Unsubscribes'
         eventDataSelection = 'unsubscribeData'
-        eventDataCount = this.props.eventData.unsubscribeData.length
+        eventDataCount = filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.eventData.unsubscribeData).length || 0 
         break;
 
       default:

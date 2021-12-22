@@ -18,7 +18,8 @@ const {
   getSubscribersSummary,
   getAuditEvents,
   getJourneyAuditLog,
-  getJourneyDetails
+  getJourneyDetails,
+  getDataExtensions
 } = require('./sfmcHelper.js');
 
 
@@ -138,7 +139,7 @@ function start() {
     }
 
     if (job.data.jobType == 'GET_ALL_DATA_EXTENSIONS') {
-      let dataExtensionsResult = await getAllDataExtensions();
+      let dataExtensionsResult = await getDataExtensions();
       return dataExtensionsResult;
     }
 
@@ -175,6 +176,11 @@ function start() {
     if (job.data.jobType == 'GET_JOURNEY_DETAILS') {
       let journeyDetailsResult = await getJourneyDetails(job.data.journeyKey);
       return journeyDetailsResult;
+    }
+
+    if (job.data.jobType == 'GET_DATA_EXTENSIONS_V2') {
+      let deResult = await getAllDataExtensions();
+      return deResult
     }
   })
 }

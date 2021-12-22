@@ -40,7 +40,8 @@ import {
   addRolesJob,
   updateRolesJob,
   changeAccountInventorySelected,
-  clearAccountInventorySelected
+  clearAccountInventorySelected,
+  filterItemsBySelectedMID
 } from '../../stateManagement/actions'
 import './AccountInventory.css'
 import { BrowserRouter, Route, Link } from 'react-router-dom';
@@ -85,7 +86,7 @@ const mapStateToProps = (state) => {
     accountUsers: state.accountUsers,
     accountUsersJob: state.accountUsersJob,
     accountUsersJobState: state.accountUsersJobState,
-
+    businessUnitSelected: state.businessUnitSelected
   };
 };
 
@@ -313,65 +314,77 @@ class AccountInventory extends Component {
 
     if (
       this.props.emailInventoryJobState === 'completed' &&
-      this.props.templateInventoryJobState === 'completed'
+      this.props.templateInventoryJobState === 'completed' &&
+      this.props.categoriesJobState === 'completed' &&
+      this.props.triggeredSendsJobState === 'completed' &&
+      this.props.cloudPagesJobState === 'completed' &&
+      this.props.dataExtensionsJobState === 'completed' &&
+      this.props.filterDataJobState === 'completed' &&
+      this.props.queriesJobState === 'completed' &&
+      this.props.automationsJobState === 'completed' &&
+      this.props.journeysJobState === 'completed' && 
+      this.props.businessUnitsJobState === 'completed' &&
+      this.props.accountUsersJobState === 'completed'
+
     ) {
+
       inventoryItems = [
         {
           object: 'Html Emails',
-          count: this.props.emailInventory.htmlEmailData.count 
+          count: filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.emailInventory.htmlEmailData.items).length
         },
         {
           object: 'Templated Emails',
-          count: this.props.emailInventory.templateEmailData.count 
+          count: filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.emailInventory.templateEmailData.items).length  
         },
         {
           object: 'Text Only Emails',
-          count: this.props.emailInventory.textOnlyEmailData.count
+          count: filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.emailInventory.textOnlyEmailData.items).length   
         },
         {
           object: 'Templates',
-          count: this.props.templateInventory.count
+          count: filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.templateInventory.items).length 
         },
         {
           object: 'Categories',
-          count: this.props.categories.count
+          count: filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.categories.items).length 
         },
         {
           object: 'Triggered Sends',
-          count: this.props.triggeredSends.length
+          count: filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.triggeredSends).length
         },
         {
           object: 'Cloud Pages',
-          count: this.props.cloudPages.count
+          count: filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.cloudPages.items).length
         },
         {
           object: 'Data Extensions',
-          count: this.props.dataExtensions.length
+          count: filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.dataExtensions).length
         },
         {
           object: 'Filters',
-          count: this.props.filterData.length
+          count: filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.filterData).length
         },
         {
           object: 'Queries',
-          count: this.props.queries.length
+          count: filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.queries).length
         },
         {
           object: 'Automations',
-          count: this.props.automations.length
+          count: filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.automations).length
         },
         {
           object: 'Journeys',
-          count: this.props.journeys.count
+          count: filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.journeys.items).length 
         },
         // Might remove Business units if it only returns the BU the app runs in
         {
           object: 'Business Units',
-          count: this.props.businessUnits.length
+          count: filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.businessUnits).length
         },
         {
           object: 'Users',
-          count: this.props.accountUsers.length
+          count: filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.accountUsers).length
         },
       ]
 

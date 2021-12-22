@@ -72,7 +72,8 @@ const initialState = {
   journeyDetailsJobState: '',
   journeyAuditLog: {},
   journeyAuditLogJob: 0,
-  journeyAuditLogJobState: ''
+  journeyAuditLogJobState: '',
+  businessUnitSelected: 'All'
   // ...
 };
 
