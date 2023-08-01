@@ -1,3 +1,11 @@
 .EmailActivityCard {
   cursor: pointer;
 }
+
+#Event-details {
+  margin-top: 1em;
+}
+
+#Event-details__body {
+  height: 400px;
+}

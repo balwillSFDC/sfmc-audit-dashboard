@@ -804,29 +804,23 @@ async function getFilterData() {
 
   let props = [
     'ObjectID',
+    'DefinitionObjectID',
     'Client.ID',
-    'CategoryID',
-    'Client.ClientPartnerKey',
     'Name',
     'CustomerKey',
     'Description',
+    'DestinationObjectID',
+    'DestinationTypeID',
+    'SourceObjectID',
+    'SourceTypeID',
+    'StatusID',
     'CreatedDate',
-    'ModifiedDate',
-    'DataFilter',
-    'DataSourceType',
-    'DataSourceClassName',
-    'DataSource.ID',
-    'DataSource.ObjectID',
-    'DataSource.Name',
-    'DataSource.ListName',
-    'DataSource.CustomerKey',
-    'DataSource.CreatedDate',
-    'DataSource.ModifiedDate'
+    'ModifiedDate'
   ];
 
   for (mid of mids) {
     const filterDefinition = new Promise((resolve, reject) => {
-      etClients[mid].SoapClient.retrieve('filterdefinition', props, (err, res) => {
+      etClients[mid].SoapClient.retrieve('filteractivity', props, (err, res) => {
         if (err) reject(err);
         if (res && res.body.OverallStatus === 'OK') resolve(res.body.Results);
       });
@@ -987,7 +981,7 @@ async function getJourneys() {
   }
 }
 
-getJourneys().then(console.log)
+// getJourneys().then(console.log)
 
 function getAccountUsers() {
   let props = [

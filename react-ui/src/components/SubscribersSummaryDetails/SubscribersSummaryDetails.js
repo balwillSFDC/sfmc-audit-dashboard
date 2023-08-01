@@ -244,7 +244,10 @@ class SubscribersSummaryDetails extends Component {
               }
             >
               {console.log(this.state.items)}
-              <DataTable items={this.state.items}>
+              <DataTable 
+                items={this.state.items} 
+                fixedHeader
+              >
                 {this.state.columns}
               </DataTable>
             </Card>

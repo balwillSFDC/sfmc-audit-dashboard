@@ -197,7 +197,13 @@ class EmailActivityDetails extends Component {
           <DataTableColumn key='EventType' label='Event Type' property='EventType' />,
           <DataTableColumn key='TriggeredSendDefinitionObjectID' label='Triggered Send Definition Object Id' property='TriggeredSendDefinitionObjectID' />
         ]
+        break;
+
+      default:
+        break;
       } 
+
+      
 
     this.setState({ items: emailActivityDetails, columns})
   }
@@ -233,6 +239,8 @@ class EmailActivityDetails extends Component {
           RegExp(event.target.value, 'i').test(item.SubscriberKey)
         );      
         break;
+      default: 
+        break;
     }
 
 		this.setState({ isFiltering, items: filteredItems });
@@ -246,8 +254,8 @@ class EmailActivityDetails extends Component {
       <IconSettings iconPath='/icons/'>
         <div className='slds-grid slds-grid_vertical'>
           <Card
-            id='subscribersSummaryDetails_Card'
-            heading='Subscribers Summary'
+            id='Event-details'
+            heading='Event Details'
             header={
               <MediaObject 
                 body={
@@ -281,6 +289,8 @@ class EmailActivityDetails extends Component {
           >
           <DataTable 
             items={this.state.items}
+            fixedHeader
+            className="infoTable"
 
           >
             {this.state.columns}

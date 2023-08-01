@@ -19,6 +19,7 @@ import {
 } from '../../stateManagement/actions';
 import { store } from '../../stateManagement/store';
 import filter from '@salesforce/design-system-react/lib/components/combobox/filter';
+import './AccountInventoryDetails.css'
 
 const mapDispatchToProps = (dispatch) => {
   return {dispatch}
@@ -287,27 +288,27 @@ class AccountInventoryDetails extends React.Component  {
         
         break;
 
-      case 'Filters':   
+      // case 'Filters':   
         
-        columns = [
-          <DataTableColumn key='name' label='Name' property='name' />,
-          <DataTableColumn key='customerKey' label='Customer Key' property='customerKey' />,
-          <DataTableColumn key='createdDate' label='Created Date' property='createdDate' />,
-          <DataTableColumn key='dataSourceName' label='Data Source Name' property='dataSourceName' />,
-          <DataTableColumn key='dataSourceCustomerKey' label='Data Source Customer Key' property='dataSourceCustomerKey' />
-        ]
+      //   columns = [
+      //     <DataTableColumn key='name' label='Name' property='name' />,
+      //     <DataTableColumn key='customerKey' label='Customer Key' property='customerKey' />,
+      //     <DataTableColumn key='createdDate' label='Created Date' property='createdDate' />,
+      //     <DataTableColumn key='dataSourceName' label='Data Source Name' property='dataSourceName' />,
+      //     <DataTableColumn key='dataSourceCustomerKey' label='Data Source Customer Key' property='dataSourceCustomerKey' />
+      //   ]
 
-        filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.filterData).forEach(item => {
-          selectedObjectDetailsList.push({
-            name: item.Name,
-            customerKey: item.CustomerKey,
-            createdDate: item.CreatedDate,
-            dataSourceName: item.DataSource.Name,
-            dataSourceCustomerKey: item.DataSource.CustomerKey
-          })
-        });
+      //   filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.filterData).forEach(item => {
+      //     selectedObjectDetailsList.push({
+      //       name: item.Name,
+      //       customerKey: item.CustomerKey,
+      //       createdDate: item.CreatedDate,
+      //       dataSourceName: item.DataSource.Name,
+      //       dataSourceCustomerKey: item.DataSource.CustomerKey
+      //     })
+      //   });
 
-        break;
+      //   break;
       
       case 'Queries':   
 
@@ -496,8 +497,8 @@ class AccountInventoryDetails extends React.Component  {
       <IconSettings iconPath='/icons/'>
           <div className='slds-grid slds-grid_vertical'>
             <Card
-              id='subscribersSummaryDetails_Card'
-              heading='Subscribers Summary'
+              id='AccountInventory_Card'
+              heading='Account Inventory Summary'
               header={
                 <MediaObject 
                   body={
@@ -514,7 +515,10 @@ class AccountInventoryDetails extends React.Component  {
                 />
               }
             >
-            <DataTable items={this.state.items}>
+            <DataTable 
+              items={this.state.items}
+              fixedHeader
+            >
               {this.state.columns}
             </DataTable>
           </Card>

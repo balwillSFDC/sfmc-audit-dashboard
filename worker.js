@@ -34,16 +34,30 @@ const subscriber = new Redis(REDIS_URL);
 
 let maxJobsPerWorker = 50;
 
-// taken from https://github.com/OptimalBits/bull/blob/develop/PATTERNS.md
-const opts = {
-  // redisOpts here will contain at least a property of connectionName which will identify the queue based on its name
-  createClient: function (type, redisOpts) {
+// // taken from https://github.com/OptimalBits/bull/blob/develop/PATTERNS.md
+// const opts = {
+//   // redisOpts here will contain at least a property of connectionName which will identify the queue based on its name
+//   createClient: function (type, redisOpts) {
 
+//     switch (type) {
+//       case 'client':
+//         return client;
+//       case 'subscriber':
+//         return subscriber;
+//       case 'bclient':
+//         return new Redis(REDIS_URL, redisOpts);
+//       default:
+//         throw new Error('Unexpected connection type: ', type);
+//     }
+//   }
+// }
+
+
+const opts = {
+  createClient: function (type, redisOpts) {
     switch (type) {
       case 'client':
-        return client;
       case 'subscriber':
-        return subscriber;
       case 'bclient':
         return new Redis(REDIS_URL, redisOpts);
       default:
@@ -52,33 +66,15 @@ const opts = {
   }
 }
 
+
 function start() {
   let eventDataQueue = new Queue('eventData', opts);
   let accountInventoryQueue = new Queue('accountInventory', opts)
   let subscriberInventoryQueue = new Queue('subscriberInventory', opts)
   let auditEventsQueue = new Queue('auditEvents', opts)
 
-  // let emailInventoryQueue = new Queue('emailInventory', opts);
-  // let templateInventoryQueue = new Queue('templateInventory', opts);
-  // let categoryInventoryQueue = new Queue('categoryInventory', opts);
-  // let triggeredSendInventoryQueue = new Queue(
-  //   'triggeredSendInventory',
-  //   opts
-  // );
-  // let cloudPageInventoryQueue = new Queue('cloudPageInventory', opts);
-  // let dataExtensionInventoryQueue = new Queue(
-  //   'dataExtensionInventory',
-  //   opts
-  // );
-  // let filterInventoryQueue = new Queue('filterInventory', opts);
-  // let queryInventoryQueue = new Queue('queryInventory', opts);
-  // let automationInventoryQueue = new Queue('automationInventory', opts);
-  // let journeyInventoryQueue = new Queue('journeyInventory', opts);
-  // let businessUnitInfoQueue = new Queue('businessUnitInfo', opts);
-  // let accountUserQueue = new Queue('accountUserInventory', opts);
-
   eventDataQueue.process(maxJobsPerWorker, async (job) => {
-    console.log(job.data);
+
 
     if (job.data.jobType == 'GET_ALL_EVENT_DATA') {
       let eventDataResult = await getAllEventData();
@@ -87,7 +83,6 @@ function start() {
   });
 
   subscriberInventoryQueue.process(maxJobsPerWorker, async (job) => {
-    console.log(job.data);
 
     if (job.data.jobType == 'GET_SUBSCRIBERS') {
       let subscribersResult = await getSubscribersSummary();
@@ -96,7 +91,6 @@ function start() {
   })
 
   auditEventsQueue.process(maxJobsPerWorker, async (job) => {
-    console.log(job.data);
 
     if (job.data.jobType == 'GET_AUDIT_EVENTS') {
       let auditEventsResults = await getAuditEvents();
@@ -110,7 +104,6 @@ function start() {
   })
 
   accountInventoryQueue.process(maxJobsPerWorker, async (job) => {
-    console.log(job.data);
 
     if (job.data.jobType == 'GET_EMAIL_INVENTORY') {
       let emailInventoryResult = await getEmailInventory();

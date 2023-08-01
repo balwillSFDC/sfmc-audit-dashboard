@@ -150,7 +150,7 @@ class AccountInventory extends Component {
 
       let counter = 0
       setInterval(() => {
-        if (counter < 10) {
+        if (counter < 50) {
           counter++
 
           if (this.props.emailInventoryJobState !== 'completed') {
@@ -319,7 +319,7 @@ class AccountInventory extends Component {
       this.props.triggeredSendsJobState === 'completed' &&
       this.props.cloudPagesJobState === 'completed' &&
       this.props.dataExtensionsJobState === 'completed' &&
-      this.props.filterDataJobState === 'completed' &&
+      // this.props.filterDataJobState === 'completed' &&
       this.props.queriesJobState === 'completed' &&
       this.props.automationsJobState === 'completed' &&
       this.props.journeysJobState === 'completed' && 
@@ -361,10 +361,10 @@ class AccountInventory extends Component {
           object: 'Data Extensions',
           count: filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.dataExtensions).length
         },
-        {
-          object: 'Filters',
-          count: filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.filterData).length
-        },
+        // {
+        //   object: 'Filters',
+        //   count: filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.filterData).length
+        // },
         {
           object: 'Queries',
           count: filterItemsBySelectedMID(this.props.businessUnitSelected, this.props.queries).length
