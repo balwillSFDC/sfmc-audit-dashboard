@@ -106,7 +106,7 @@ const handleClick = (e) => {
 
 const CustomDataTableCell = ({ children, ...props }) => (
   <DataTableCell {...props}>
-    <Link onClick={handleClick}>
+    <Link to="/" onClick={handleClick}>
       {children}
     </Link>
   </DataTableCell>
