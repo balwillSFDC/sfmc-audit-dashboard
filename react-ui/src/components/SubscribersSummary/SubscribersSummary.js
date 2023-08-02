@@ -30,9 +30,13 @@ const mapDispatchToProps = (dispatch) => {
 
 class SubscribersSummary extends Component {
   constructor(props) {
-    super(props)
-
+    super(props) 
+    this.state = {
+      timer: '0:00',
+      timerInterval: null
+    }
   }
+  
   
   componentDidMount() {
     if (this.props.subscribersJobState !== 'completed') {
@@ -46,23 +50,58 @@ class SubscribersSummary extends Component {
           this.props.dispatch(updateSubscribersJob(this.props.subscribersJob));
         } 
       }, 2000);
+
+
+      let seconds = 0;
+      // Store the timer ID in the component state
+      let timerInterval = setInterval(() => {
+        if (this.props.subscribersJobState !== 'completed') {
+          seconds++;
+          let minutes = Math.floor(seconds / 60);
+          let remainingSeconds = seconds % 60;
+          let formattedTime = `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+          this.setState({ timer: formattedTime });
+        }
+      }, 1000)
+
+      this.setState({timerInterval})
+
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
+    // When component is refreshed
     if (prevProps.subscribersJobState === 'completed' && this.props.subscribersJobState !== 'completed') {
       setInterval(() => {
         if (this.props.subscribersJobState !== 'completed') {
           this.props.dispatch(updateSubscribersJob(this.props.subscribersJob));
         }
       }, 2000);
+
+
+      // reset timer 
+      this.setState({timer: "00:00"})
+      let seconds = 0;
+      // Store the timer ID in the component state
+      let timerInterval = setInterval(() => {
+        seconds++;
+        let minutes = Math.floor(seconds / 60);
+        let remainingSeconds = seconds % 60;
+        let formattedTime = `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        this.setState({ timer: formattedTime });
+      }, 1000)
+
+      this.setState({timerInterval})
+    }
+
+    if (this.props.subscribersJobState === 'completed') {
+      clearInterval(this.state.timerInterval)
     }
   }
 
   handleRefresh = () => {
     this.props.dispatch(addSubscribersJob());
   }
-
 
   render() {
     let info;
@@ -99,6 +138,7 @@ class SubscribersSummary extends Component {
                         Subscribers Summary
                       </div>
                       {info}
+                      {this.state.timer}
                     </>
                   }
                   figure={<Icon category="standard" name="people" size="medium" />}

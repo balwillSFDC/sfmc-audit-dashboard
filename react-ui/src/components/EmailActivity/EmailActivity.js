@@ -32,6 +32,8 @@ class emailActivity extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      timerInterval: null,
+      timer: "00:00"
     }
   }
 
@@ -48,16 +50,48 @@ class emailActivity extends React.Component {
           this.props.dispatch(updateEventDataJob(this.props.eventDataJob));
         }
       }, 2000);
+
+      let seconds = 0;
+      // Store the timer ID in the component state
+      let timerInterval = setInterval(() => {
+        seconds++;
+        let minutes = Math.floor(seconds / 60);
+        let remainingSeconds = seconds % 60;
+        let formattedTime = `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        this.setState({ timer: formattedTime });
+      }, 1000)
+
+      this.setState({timerInterval})
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
+    // When component is refreshed
     if (prevProps.eventDataJobState === 'completed' && this.props.eventDataJobState !== 'completed') {
       setInterval(() => {
         if (this.props.eventDataJobState !== 'completed') {
           this.props.dispatch(updateEventDataJob(this.props.eventDataJob));
         }
       }, 2000);
+
+      // reset timer 
+      this.setState({timer: "00:00"})
+      let seconds = 0;
+      // Store the timer ID in the component state
+      let timerInterval = setInterval(() => {
+        seconds++;
+        let minutes = Math.floor(seconds / 60);
+        let remainingSeconds = seconds % 60;
+        let formattedTime = `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        this.setState({ timer: formattedTime });
+      }, 1000)
+
+      this.setState({timerInterval})
+
+    }
+
+    if (this.props.eventDataJobState === 'completed') {
+      clearInterval(this.state.timerInterval)
     }
   }
 
@@ -101,6 +135,7 @@ class emailActivity extends React.Component {
                         Email Activity
                       </div>
                       {info}
+                      {this.state.timer}
                     </>
                   }
                   figure={<Icon category="standard" name='email' />}

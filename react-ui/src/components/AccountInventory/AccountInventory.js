@@ -117,7 +117,10 @@ CustomDataTableCell.displayName = DataTableCell.displayName;
 class AccountInventory extends Component {
   constructor(props) {
     super(props);
-
+    this.state = {
+      timer: "00:00",
+      timerInterval: null
+    }
   }
   
   componentDidMount() {
@@ -150,7 +153,23 @@ class AccountInventory extends Component {
 
       let counter = 0
       setInterval(() => {
-        if (counter < 50) {
+        if (
+          counter < 50 &&
+          (
+            this.props.emailInventoryJobState !== 'completed' ||
+            this.props.templateInventoryJobState !== 'completed' ||
+            this.props.categoriesJobState !== 'completed' ||
+            this.props.triggeredSendsJobState !== 'completed' ||
+            this.props.cloudPagesJobState !== 'completed' ||
+            this.props.dataExtensionsJobState !== 'completed' ||
+            // this.props.filterDataJobState !== 'completed' ||
+            this.props.queriesJobState !== 'completed' ||
+            this.props.automationsJobState !== 'completed' ||
+            this.props.journeysJobState !== 'completed' ||
+            this.props.businessUnitsJobState !== 'completed' ||
+            this.props.accountUsersJobState !== 'completed' 
+          )
+        ) {
           counter++
 
           if (this.props.emailInventoryJobState !== 'completed') {
@@ -203,35 +222,66 @@ class AccountInventory extends Component {
         }    
       }, 2000 )
     }
-  }  
 
-
-  componentDidUpdate(prevProps, prevState) {
     if (
-      prevProps.emailInventoryJobState === 'completed' &&
-      prevProps.templateInventoryJobState === 'completed' &&
-      prevProps.categoriesJobState === 'completed' &&
-      prevProps.triggeredSendsJobState === 'completed' &&
-      prevProps.cloudPagesJobState === 'completed' &&
-      prevProps.dataExtensionsJobState === 'completed' &&
-      prevProps.filterDataJobState === 'completed' &&
-      prevProps.queriesJobState === 'completed' &&
-      prevProps.automationsJobState === 'completed' &&
-      prevProps.journeysJobState === 'completed' && 
-      prevProps.businessUnitsJobState === 'completed' &&
-      prevProps.accountUsersJobState === 'completed' &&
       this.props.emailInventoryJobState !== 'completed' &&
       this.props.templateInventoryJobState !== 'completed' &&
       this.props.categoriesJobState !== 'completed' &&
       this.props.triggeredSendsJobState !== 'completed' &&
       this.props.cloudPagesJobState !== 'completed' &&
       this.props.dataExtensionsJobState !== 'completed' &&
-      this.props.filterDataJobState !== 'completed' &&
       this.props.queriesJobState !== 'completed' &&
       this.props.automationsJobState !== 'completed' &&
-      this.props.journeysJobState !== 'completed' && 
+      this.props.journeysJobState !== 'completed' &&
       this.props.businessUnitsJobState !== 'completed' &&
-      this.props.accountUsersJobState !== 'completed'
+      this.props.accountUsersJobState !== 'completed' 
+    ) {
+      let seconds = 0;
+      // Store the timer ID in the component state
+      let timerInterval = setInterval(() => {
+        seconds++;
+        let minutes = Math.floor(seconds / 60);
+        let remainingSeconds = seconds % 60;
+        let formattedTime = `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        this.setState({ timer: formattedTime });
+      }, 1000)
+
+      this.setState({timerInterval})
+    }
+  }  
+
+
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      (
+        prevProps.emailInventoryJobState === 'completed' &&
+        prevProps.templateInventoryJobState === 'completed' &&
+        prevProps.categoriesJobState === 'completed' &&
+        prevProps.triggeredSendsJobState === 'completed' &&
+        prevProps.cloudPagesJobState === 'completed' &&
+        prevProps.dataExtensionsJobState === 'completed' &&
+        // prevProps.filterDataJobState === 'completed' &&
+        prevProps.queriesJobState === 'completed' &&
+        prevProps.automationsJobState === 'completed' &&
+        prevProps.journeysJobState === 'completed' && 
+        prevProps.businessUnitsJobState === 'completed' &&
+        prevProps.accountUsersJobState === 'completed' 
+      ) 
+      &&
+      (
+        this.props.emailInventoryJobState !== 'completed' ||
+        this.props.templateInventoryJobState !== 'completed' ||
+        this.props.categoriesJobState !== 'completed' ||
+        this.props.triggeredSendsJobState !== 'completed' ||
+        this.props.cloudPagesJobState !== 'completed' ||
+        this.props.dataExtensionsJobState !== 'completed' ||
+        // this.props.filterDataJobState !== 'completed' ||
+        this.props.queriesJobState !== 'completed' ||
+        this.props.automationsJobState !== 'completed' ||
+        this.props.journeysJobState !== 'completed' ||
+        this.props.businessUnitsJobState !== 'completed' ||
+        this.props.accountUsersJobState !== 'completed'
+      )
     ) {
       setInterval(() => {
         if (this.props.emailInventoryJobState !== 'completed') {
@@ -258,9 +308,9 @@ class AccountInventory extends Component {
           this.props.dispatch(updateDataExtensionsJob(this.props.dataExtensionsJob));
         }
 
-        if (this.props.filterDataJobState !== 'completed') {
-          this.props.dispatch(updateFilterDataJob(this.props.filterDataJob));
-        }
+        // if (this.props.filterDataJobState !== 'completed') {
+        //   this.props.dispatch(updateFilterDataJob(this.props.filterDataJob));
+        // }
 
         if (this.props.queriesJobState !== 'completed') {
           this.props.dispatch(updateQueriesJob(this.props.queriesJob));
@@ -287,6 +337,37 @@ class AccountInventory extends Component {
         // }
 
       }, 2000 )
+
+      // reset timer 
+      this.setState({timer: "00:00"})
+
+      let seconds = 0;
+      // Store the timer ID in the component state
+      let timerInterval = setInterval(() => {
+        seconds++;
+        let minutes = Math.floor(seconds / 60);
+        let remainingSeconds = seconds % 60;
+        let formattedTime = `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        this.setState({ timer: formattedTime });
+      }, 1000)
+
+      this.setState({timerInterval})
+    }
+
+    if (
+      this.props.emailInventoryJobState === 'completed' &&
+      this.props.templateInventoryJobState === 'completed' &&
+      this.props.categoriesJobState === 'completed' &&
+      this.props.triggeredSendsJobState === 'completed' &&
+      this.props.cloudPagesJobState === 'completed' &&
+      this.props.dataExtensionsJobState === 'completed' &&
+      this.props.queriesJobState === 'completed' &&
+      this.props.automationsJobState === 'completed' &&
+      this.props.journeysJobState === 'completed' &&
+      this.props.businessUnitsJobState === 'completed' &&
+      this.props.accountUsersJobState === 'completed' 
+    ) {
+      clearInterval(this.state.timerInterval)
     }
   }
 
@@ -435,6 +516,7 @@ class AccountInventory extends Component {
                         Account Inventory
                       </div>
                       {info}
+                      {this.state.timer}
                     </>
                   }
                   figure={<Icon category="standard" name="account" />}
